@@ -108,6 +108,41 @@ public class mainScript : MonoBehaviour
     public bool statistik;
     public GameObject map1;
     public GameObject map2;
+    public GameObject Forschen;
+    public GameObject ForschenButton;
+    bool forschenAn;
+    public int[] forschenRunde;
+    public int[] forschenRathaus;
+    public int[] forschenLänder;
+
+    public int[] forschenBabaren;
+    public int[] forschenBogenschützen;
+    public int[] forschenReiter;
+
+    public int[] forschenRathausBauen;
+    public int[] forschenKaserneBauen;
+    public int[] forschenStraßeBauen;
+
+    public int[] forschenFähigkeit;
+
+    public int[] forschenPlündern;
+
+    int forschenRundePreis;
+    int forschenRathausPreis;
+    int forschenLänderPreis;
+
+    int forschenBabarenPreis;
+    int forschenBogenschützenPreis;
+    int forschenReiterPreis;
+
+    int forschenRathausBauenPreis;
+    int forschenKaserneBauenPreis;
+    int forschenStraßeBauenPreis;
+
+    int forschenFähigkeitPreis;
+
+    int forschenPlündernPreis;
+
     // Statistik Arrays
     public int[] Kasernen;
     public int[] Straßen;
@@ -165,6 +200,34 @@ public class mainScript : MonoBehaviour
         gestorbeneTruppen = new int[5];
         ausgebildeteTruppen = new int[5];
         canvasstatistik.gameObject.SetActive(false);
+
+        forschenRunde = new int[5];
+        forschenRathaus = new int[5];
+        forschenLänder = new int[5];
+        forschenBabaren = new int[5];
+        forschenBogenschützen = new int[5];
+        forschenReiter = new int[5];
+        forschenRathausBauen = new int[5];
+        forschenKaserneBauen = new int[5];
+        forschenStraßeBauen = new int[5];
+        forschenFähigkeit = new int[5];
+        forschenPlündern = new int[5];
+
+        forschenRundePreis = 1;
+        forschenRathausPreis = 1;
+        forschenLänderPreis = 1;
+
+        forschenBabarenPreis = 1;
+        forschenBogenschützenPreis = 1;
+        forschenReiterPreis = 1;
+
+        forschenRathausBauenPreis = 1;
+        forschenKaserneBauenPreis = 1;
+        forschenStraßeBauenPreis = 1;
+
+        forschenFähigkeitPreis = 1;
+
+        forschenPlündernPreis = 1;
 
     }
 
@@ -373,9 +436,10 @@ public class mainScript : MonoBehaviour
         {
             Kasernen[s] = 0;
             länder[s] = 0;
-            for (int i = 1; i < 14; i++)
+            rathäuser[s] = 0;
+            for (int i = 1; i < 15; i++)
             {
-                for (int t = 1; t < 13; t++)
+                for (int t = 1; t < 14; t++)
                 {
                     if (spielerLand[i * 100 + t] == s)
                     {
@@ -383,7 +447,6 @@ public class mainScript : MonoBehaviour
                         if (rathaus[i * 100 + t] != 0)
                         {
                             rathäuser[s]++;
-                               Debug.Log("hi: " + rathäuser[s] + "   " + s);
                         }
                         if (kaserne[i * 100 + t] != 0)
                         {
@@ -438,7 +501,7 @@ public class mainScript : MonoBehaviour
                     runde++;
                 }
                 goldbekommen = true;
-                gold[anDerReihe] += 10 + (länder[anDerReihe] / 5) * 10 + rathäuser[anDerReihe] * 2;
+                gold[anDerReihe] += 10 + forschenRunde[anDerReihe] + (länder[anDerReihe] / 5) * (10 + forschenLänder[anDerReihe]) + rathäuser[anDerReihe] * 2 + forschenRathaus[anDerReihe] * rathäuser[anDerReihe];
             }
 
         }
@@ -461,6 +524,7 @@ public class mainScript : MonoBehaviour
                 {
                     canvas1.gameObject.transform.GetChild(10).gameObject.transform.GetChild(14).transform.position = new Vector3(Screen.width * 0.125f, Screen.height * 0.55f, 0);
                     canvas1.gameObject.transform.GetChild(10).gameObject.transform.GetChild(14).gameObject.transform.GetChild(1).gameObject.SetActive(true);
+                    canvas1.gameObject.transform.GetChild(10).gameObject.transform.GetChild(14).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Beschwörung: " + (100 - forschenFähigkeit[anDerReihe]) + "G";
                 }
                 if (reiterBeschwören)
                 {
@@ -1161,7 +1225,7 @@ public class mainScript : MonoBehaviour
                     this.transform.position = new Vector3(75, this.transform.position.y, this.transform.position.z);
                 }
             }
-            if(map == 2)
+            if (map == 2)
             {
                 speed = 200;
             }
@@ -1226,8 +1290,157 @@ public class mainScript : MonoBehaviour
         }
         if (statistik)
         {
-           // this.transform.position = new Vector3(2000, 160, 180);
+            // this.transform.position = new Vector3(2000, 160, 180);
             canvas1.gameObject.SetActive(false);
+        }
+        if (map == 1)
+        {
+            if (anDerReihe == spielerLand[303])
+            {
+                ForschenButton.gameObject.SetActive(true);
+            }
+            else
+            {
+                ForschenButton.gameObject.SetActive(false);
+            }
+        }
+        if (forschenRunde[anDerReihe] != 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(1).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(1).GetComponent<Button>().interactable = true;
+        }
+        if (forschenRathaus[anDerReihe] != 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(2).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(2).GetComponent<Button>().interactable = true;
+        }
+        if (forschenLänder[anDerReihe] != 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(3).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(3).GetComponent<Button>().interactable = true;
+        }
+        if (forschenBabaren[anDerReihe] != 0 || rasse[anDerReihe - 1] == 2)
+        {
+            Forschen.transform.GetChild(0).GetChild(4).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(4).GetComponent<Button>().interactable = true;
+        }
+        if (forschenBogenschützen[anDerReihe] != 0 || rasse[anDerReihe - 1] == 3)
+        {
+            Forschen.transform.GetChild(0).GetChild(5).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(5).GetComponent<Button>().interactable = true;
+        }
+        if (forschenReiter[anDerReihe] != 0 || rasse[anDerReihe - 1] == 1)
+        {
+            Forschen.transform.GetChild(0).GetChild(6).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(6).GetComponent<Button>().interactable = true;
+        }
+        if (forschenRathausBauen[anDerReihe] != 0 || rasse[anDerReihe - 1] == 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(7).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(7).GetComponent<Button>().interactable = true;
+        }
+        if (forschenKaserneBauen[anDerReihe] != 0 || rasse[anDerReihe - 1] == 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(8).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(8).GetComponent<Button>().interactable = true;
+        }
+        if (forschenStraßeBauen[anDerReihe] != 0 || rasse[anDerReihe - 1] == 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(9).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(9).GetComponent<Button>().interactable = true;
+        }
+        if (forschenFähigkeit[anDerReihe] > 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(10).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(10).GetComponent<Button>().interactable = true;
+        }
+        if (forschenFähigkeit[anDerReihe] != 10)
+        {
+            Forschen.transform.GetChild(0).GetChild(11).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(11).GetComponent<Button>().interactable = true;
+        }
+        if (forschenFähigkeit[anDerReihe] != 20)
+        {
+            Forschen.transform.GetChild(0).GetChild(12).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(12).GetComponent<Button>().interactable = true;
+        }
+        if (forschenPlündern[anDerReihe] > 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(13).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(13).GetComponent<Button>().interactable = true;
+        }
+        if (forschenPlündern[anDerReihe] != 5)
+        {
+            Forschen.transform.GetChild(0).GetChild(14).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(14).GetComponent<Button>().interactable = true;
+        }
+        if (forschenPlündern[anDerReihe] != 10)
+        {
+            Forschen.transform.GetChild(0).GetChild(15).GetComponent<Button>().interactable = false;
+        }
+        else
+        {
+            Forschen.transform.GetChild(0).GetChild(15).GetComponent<Button>().interactable = true;
+        }
+        if (rasse[anDerReihe - 1] == 0)
+        {
+            Forschen.transform.GetChild(0).GetChild(7).GetComponent<Button>().interactable = false;
+            Forschen.transform.GetChild(0).GetChild(8).GetComponent<Button>().interactable = false;
+            Forschen.transform.GetChild(0).GetChild(9).GetComponent<Button>().interactable = false;
+        }
+        if (rasse[anDerReihe - 1] == 1)
+        {
+            Forschen.transform.GetChild(0).GetChild(6).GetComponent<Button>().interactable = false;
+        }
+        if (rasse[anDerReihe - 1] == 2)
+        {
+            Forschen.transform.GetChild(0).GetChild(4).GetComponent<Button>().interactable = false;
+        }
+        if (rasse[anDerReihe - 1] == 3)
+        {
+            Forschen.transform.GetChild(0).GetChild(5).GetComponent<Button>().interactable = false;
         }
     }
     public int getLand()
@@ -1239,7 +1452,7 @@ public class mainScript : MonoBehaviour
                 RaycastHit hit;
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 if (Physics.Raycast(ray, out hit))
-                      Debug.Log(hit.point);
+                    // Debug.Log(hit.point);
                     if (map == 1)
                     {
                         if (hit.point.z > 0)
@@ -1599,13 +1812,13 @@ public class mainScript : MonoBehaviour
     {
         if (gebäude == 0)
         {
-            if (zahl == 1 && gold[anDerReihe] >= 30 || zahl == 2 && gold[anDerReihe] >= 40 || zahl == 3 && gold[anDerReihe] >= 25 || zahl == 4 && gold[anDerReihe] >= 100 || zahl == 5 && gold[anDerReihe] >= 150 || rasse[anDerReihe - 1] == 0 && zahl == 1 && gold[anDerReihe] >= 20 || rasse[anDerReihe - 1] == 0 && zahl == 2 && gold[anDerReihe] >= 25 || rasse[anDerReihe - 1] == 0 && zahl == 3 && gold[anDerReihe] >= 15)
+            if (zahl == 1 && gold[anDerReihe] >= 30 - forschenRathausBauen[anDerReihe] || zahl == 2 && gold[anDerReihe] >= 40 - forschenKaserneBauen[anDerReihe] || zahl == 3 && gold[anDerReihe] >= 25 - forschenStraßeBauen[anDerReihe] || zahl == 4 && gold[anDerReihe] >= 100 - forschenFähigkeit[anDerReihe] || zahl == 5 && gold[anDerReihe] >= 150 || rasse[anDerReihe - 1] == 0 && zahl == 1 && gold[anDerReihe] >= 20 || rasse[anDerReihe - 1] == 0 && zahl == 2 && gold[anDerReihe] >= 25 || rasse[anDerReihe - 1] == 0 && zahl == 3 && gold[anDerReihe] >= 15)
             {
                 if (zahl == 1)
                 {
                     if (rasse[anDerReihe - 1] != 0)
                     {
-                        gold[anDerReihe] -= 30;
+                        gold[anDerReihe] -= 30 - forschenRathausBauen[anDerReihe];
                     }
                     else
                     {
@@ -1616,7 +1829,7 @@ public class mainScript : MonoBehaviour
                 {
                     if (rasse[anDerReihe - 1] != 0)
                     {
-                        gold[anDerReihe] -= 40;
+                        gold[anDerReihe] -= 40 - forschenKaserneBauen[anDerReihe];
                     }
                     else
                     {
@@ -1627,7 +1840,7 @@ public class mainScript : MonoBehaviour
                 {
                     if (rasse[anDerReihe - 1] != 0)
                     {
-                        gold[anDerReihe] -= 25;
+                        gold[anDerReihe] -= 25 - forschenStraßeBauen[anDerReihe];
                     }
                     else
                     {
@@ -1636,7 +1849,7 @@ public class mainScript : MonoBehaviour
                 }
                 if (zahl == 4)
                 {
-                    gold[anDerReihe] -= 100;
+                    gold[anDerReihe] -= 100 - forschenFähigkeit[anDerReihe];
                 }
                 if (zahl == 5)
                 {
@@ -1682,23 +1895,23 @@ public class mainScript : MonoBehaviour
     }
     public void truppenAusbilden()
     {
-        if (gold[anDerReihe] >= (bogiesAusbilden * 15 + babosAusbilden * 10 + reiterAusbilden * 25) && rasse[anDerReihe - 1] == 0 || rasse[anDerReihe - 1] == 1 && gold[anDerReihe] >= (bogiesAusbilden * 15 + babosAusbilden * 10 + reiterAusbilden * 20) || rasse[anDerReihe - 1] == 2 && gold[anDerReihe] >= (bogiesAusbilden * 15 + babosAusbilden * 7 + reiterAusbilden * 25) || rasse[anDerReihe - 1] == 3 && gold[anDerReihe] >= (bogiesAusbilden * 12 + babosAusbilden * 10 + reiterAusbilden * 25))
+        if (gold[anDerReihe] >= (bogiesAusbilden * (15 - forschenBogenschützen[anDerReihe]) + babosAusbilden * (10 - forschenBabaren[anDerReihe]) + reiterAusbilden * (25 - forschenReiter[anDerReihe])) && rasse[anDerReihe - 1] == 0 || rasse[anDerReihe - 1] == 1 && gold[anDerReihe] >= (bogiesAusbilden * 15 + babosAusbilden * 10 + reiterAusbilden * 20) || rasse[anDerReihe - 1] == 2 && gold[anDerReihe] >= (bogiesAusbilden * 15 + babosAusbilden * 7 + reiterAusbilden * 25) || rasse[anDerReihe - 1] == 3 && gold[anDerReihe] >= (bogiesAusbilden * 12 + babosAusbilden * 10 + reiterAusbilden * 25))
         {
             if (rasse[anDerReihe - 1] == 0)
             {
-                gold[anDerReihe] -= (bogiesAusbilden * 15 + babosAusbilden * 10 + reiterAusbilden * 25);
+                gold[anDerReihe] -= (bogiesAusbilden * (15 - forschenBogenschützen[anDerReihe]) + babosAusbilden * (10 - forschenBabaren[anDerReihe]) + reiterAusbilden * (25 - forschenReiter[anDerReihe]));
             }
             if (rasse[anDerReihe - 1] == 1)
             {
-                gold[anDerReihe] -= (bogiesAusbilden * 15 + babosAusbilden * 10 + reiterAusbilden * 20);
+                gold[anDerReihe] -= (bogiesAusbilden * (15 - forschenBogenschützen[anDerReihe]) + babosAusbilden * (10 - forschenBabaren[anDerReihe]) + reiterAusbilden * 20);
             }
             if (rasse[anDerReihe - 1] == 2)
             {
-                gold[anDerReihe] -= (bogiesAusbilden * 15 + babosAusbilden * 7 + reiterAusbilden * 25);
+                gold[anDerReihe] -= (bogiesAusbilden * (15 - forschenBogenschützen[anDerReihe]) + babosAusbilden * 7 + reiterAusbilden * (25 - forschenReiter[anDerReihe]));
             }
             if (rasse[anDerReihe - 1] == 3)
             {
-                gold[anDerReihe] -= (bogiesAusbilden * 12 + babosAusbilden * 10 + reiterAusbilden * 25);
+                gold[anDerReihe] -= (bogiesAusbilden * 12 + babosAusbilden * (10 - forschenBabaren[anDerReihe]) + reiterAusbilden * (25 - forschenReiter[anDerReihe]));
             }
             bogenschützen[ausbilLand] += bogiesAusbilden;
             babaren[ausbilLand] += babosAusbilden;
@@ -1709,7 +1922,7 @@ public class mainScript : MonoBehaviour
     public void GebäudePlündern()
     {
         gebäudePlündern = true;
-        gold[anDerReihe] += (rathaus[plündderLand] * 20 + kaserne[plündderLand] * 15) + (rathaus[zweitesAngriffsLand] * 20 + kaserne[zweitesAngriffsLand] * 15);
+        gold[anDerReihe] += (rathaus[plündderLand] * (20 + forschenPlündern[anDerReihe]) + kaserne[plündderLand] * (15 + forschenPlündern[anDerReihe])) + (rathaus[zweitesAngriffsLand] * (20 + forschenPlündern[anDerReihe]) + kaserne[zweitesAngriffsLand] * (15 + forschenPlündern[anDerReihe]));
         rathaus[plündderLand] = 0;
         kaserne[plündderLand] = 0;
         kaserne[zweitesAngriffsLand] = 0;
@@ -1737,7 +1950,7 @@ public class mainScript : MonoBehaviour
     public void SpielerVerloren()
     {
 
-        for (int i = 0; i < spieler +1 ; i++)
+        for (int i = 0; i < spieler + 1; i++)
         {
             if (spielerVerloren[i] == 1)
             {
@@ -1751,9 +1964,9 @@ public class mainScript : MonoBehaviour
     }
     public void Pfeilhagel()
     {
-        if(gold[anDerReihe] >= 100)
+        if (gold[anDerReihe] >= 100 - forschenFähigkeit[anDerReihe])
         {
-            gold[anDerReihe] -= 100;
+            gold[anDerReihe] -= 100 - forschenFähigkeit[anDerReihe];
         }
         else
         {
@@ -1763,9 +1976,9 @@ public class mainScript : MonoBehaviour
     }
     public void Clonen()
     {
-        if(gold[anDerReihe] >= 100)
+        if (gold[anDerReihe] >= 100 - forschenFähigkeit[anDerReihe])
         {
-            gold[anDerReihe] -= 100;
+            gold[anDerReihe] -= 100 - forschenFähigkeit[anDerReihe];
             clonen = true;
         }
         else
@@ -1776,9 +1989,9 @@ public class mainScript : MonoBehaviour
     }
     public void ReiterBeschwören()
     {
-        if (gold[anDerReihe] >= 100 && !zugGemacht && !reiterBeschwören)
+        if (gold[anDerReihe] >= 100 - forschenFähigkeit[anDerReihe] && !zugGemacht && !reiterBeschwören)
         {
-            gold[anDerReihe] -= 100;
+            gold[anDerReihe] -= 100 - forschenFähigkeit[anDerReihe];
             reiterBeschwören = true;
         }
     }
@@ -1836,7 +2049,7 @@ public class mainScript : MonoBehaviour
     public void nächsteMap()
     {
         map++;
-        if(map == 3)
+        if (map == 3)
         {
             map = 1;
         }
@@ -1848,7 +2061,7 @@ public class mainScript : MonoBehaviour
         {
             GUIStyle customLabel = new GUIStyle("label");
             customLabel.fontSize = 30;
-            GUI.Label(new Rect(Screen.width * 0.5f  - 50, Screen.height * 0.05f, Screen.height * 1f, Screen.width * 0.5f), "Statistik" , customLabel);
+            GUI.Label(new Rect(Screen.width * 0.5f - 50, Screen.height * 0.05f, Screen.height * 1f, Screen.width * 0.5f), "Statistik", customLabel);
             customLabel.fontSize = 20;
             GUI.Label(new Rect(Screen.width * 0.1f, Screen.height * 0.3f, Screen.height * 1f, Screen.width * 1f), spieler1, customLabel);
             GUI.Label(new Rect(Screen.width * 0.1f, Screen.height * 0.4f, Screen.height * 1f, Screen.width * 1f), spieler2, customLabel);
@@ -1868,7 +2081,7 @@ public class mainScript : MonoBehaviour
             GUI.Label(new Rect(Screen.width * 0.57f, Screen.height * 0.2f, Screen.height * 1f, Screen.width * 1f), "Nieten\n(gewürfelt)", customLabel);
             for (int i = 1; i < 5; i++)
             {
-                if (spieler == 3 && i < 4 || spieler > 3 && i != 4 || spieler == 2 && i < 3 ||spieler == 4)
+                if (spieler == 3 && i < 4 || spieler > 3 && i != 4 || spieler == 2 && i < 3 || spieler == 4)
                 {
                     GUI.Label(new Rect(Screen.width * 0.2f, Screen.height * 0.2f + Screen.height * 0.1f * i, Screen.height * 1f, Screen.width * 1f), "" + gold[i], customLabel);
                     GUI.Label(new Rect(Screen.width * 0.25f, Screen.height * 0.2f + Screen.height * 0.1f * i, Screen.height * 1f, Screen.width * 1f), "" + länder[i], customLabel);
@@ -1878,6 +2091,114 @@ public class mainScript : MonoBehaviour
                     GUI.Label(new Rect(Screen.width * 0.57f, Screen.height * 0.2f + Screen.height * 0.1f * i, Screen.height * 1f, Screen.width * 1f), "(" + NietenStatistik[i] + ")", customLabel);
                 }
             }
+        }
+    }
+    public void forschen()
+    {
+        forschenAn = !forschenAn;
+        if (forschenAn)
+        {
+            Forschen.SetActive(true);
+        }
+        else
+        {
+            Forschen.SetActive(false);
+        }
+        Forschen.transform.GetChild(0).GetChild(1).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenRundePreis;
+        Forschen.transform.GetChild(0).GetChild(2).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenRathausPreis;
+        Forschen.transform.GetChild(0).GetChild(3).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenLänderPreis;
+        Forschen.transform.GetChild(0).GetChild(4).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenBabarenPreis;
+        Forschen.transform.GetChild(0).GetChild(5).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenBogenschützenPreis;
+        Forschen.transform.GetChild(0).GetChild(6).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenReiterPreis;
+        Forschen.transform.GetChild(0).GetChild(7).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenRathausBauenPreis;
+        Forschen.transform.GetChild(0).GetChild(8).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenKaserneBauenPreis;
+        Forschen.transform.GetChild(0).GetChild(9).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenStraßeBauenPreis;
+        Forschen.transform.GetChild(0).GetChild(10).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenFähigkeitPreis;
+        Forschen.transform.GetChild(0).GetChild(11).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenFähigkeitPreis;
+        Forschen.transform.GetChild(0).GetChild(12).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenFähigkeitPreis;
+        Forschen.transform.GetChild(0).GetChild(13).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenPlündernPreis;
+        Forschen.transform.GetChild(0).GetChild(14).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenPlündernPreis;
+        Forschen.transform.GetChild(0).GetChild(15).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenPlündernPreis;
+
+        
+    }
+    public void erforschen(int i)
+    {
+        Button Button = null;
+        if (i == 1 && gold[anDerReihe] >= forschenRundePreis)
+        {
+            gold[anDerReihe] -= forschenRundePreis;
+            forschenRunde[anDerReihe] = 3;
+        }
+        if (i == 2 && gold[anDerReihe] >= forschenRathausPreis)
+        {
+            gold[anDerReihe] -= forschenRathausPreis;
+            forschenRathaus[anDerReihe] = 1;
+        }
+        if (i == 3 && gold[anDerReihe] >= forschenLänderPreis)
+        {
+            gold[anDerReihe] -= forschenLänderPreis;
+            forschenLänder[anDerReihe] = 2;
+        }
+        if (i == 4 && gold[anDerReihe] >= forschenBabarenPreis)
+        {
+            gold[anDerReihe] -= forschenBabarenPreis;
+            forschenBabaren[anDerReihe] = 2;
+        }
+        if (i == 5 && gold[anDerReihe] >= forschenBogenschützenPreis)
+        {
+            gold[anDerReihe] -= forschenBogenschützenPreis;
+            forschenBogenschützen[anDerReihe] = 2;
+        }
+        if (i == 6 && gold[anDerReihe] >= forschenReiterPreis)
+        {
+            gold[anDerReihe] -= forschenReiterPreis;
+            forschenReiter[anDerReihe] = 2;
+        }
+        if (i == 7 && gold[anDerReihe] >= forschenRathausBauenPreis)
+        {
+            gold[anDerReihe] -= forschenRathausBauenPreis;
+            forschenRathausBauen[anDerReihe] = 5;
+        }
+        if (i == 8 && gold[anDerReihe] >= forschenKaserneBauenPreis)
+        {
+            gold[anDerReihe] -= forschenKaserneBauenPreis;
+            forschenKaserneBauen[anDerReihe] = 5;
+        }
+        if (i == 9 && gold[anDerReihe] >= forschenStraßeBauenPreis)
+        {
+            gold[anDerReihe] -= forschenStraßeBauenPreis;
+            forschenStraßeBauen[anDerReihe] = 5;
+        }
+        if (i == 10 && gold[anDerReihe] >= forschenFähigkeitPreis)
+        {
+            gold[anDerReihe] -= forschenFähigkeitPreis;
+            forschenFähigkeit[anDerReihe] = 10;
+        }
+        if (i == 11 && gold[anDerReihe] >= forschenFähigkeitPreis)
+        {
+            gold[anDerReihe] -= forschenFähigkeitPreis;
+            forschenFähigkeit[anDerReihe] = 20;
+        }
+        if (i == 12 && gold[anDerReihe] >= forschenFähigkeitPreis)
+        {
+            gold[anDerReihe] -= forschenFähigkeitPreis;
+            forschenFähigkeit[anDerReihe] = 30;
+        }
+        if (i == 13 && gold[anDerReihe] >= forschenPlündernPreis)
+        {
+            gold[anDerReihe] -= forschenRathausPreis;
+            forschenPlündern[anDerReihe] = 5;
+        }
+        if (i == 14 && gold[anDerReihe] >= forschenPlündernPreis)
+        {
+            gold[anDerReihe] -= forschenRathausPreis;
+            forschenPlündern[anDerReihe] = 10;
+        }
+        if (i == 15 && gold[anDerReihe] >= forschenPlündernPreis)
+        {
+            gold[anDerReihe] -= forschenPlündernPreis;
+            forschenPlündern[anDerReihe] = 15;
         }
     }
 }

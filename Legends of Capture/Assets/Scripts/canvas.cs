@@ -34,7 +34,7 @@ public class canvas : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        a = mainCamera.GetComponent<mainScript>();
+        a = mainCamera.GetComponent<mainScript>(); 
         if (anDerReihe || gold || rathäuser || länder || zeit || spieler1 || spieler2 || spieler3 || spieler4 || runde)
         {
             text = GetComponent<Text>();
@@ -67,20 +67,7 @@ public class canvas : MonoBehaviour
             {
                 for (int i = 0; i < a.spieler + 1; i++)
                 {
-                    a.rathäuser[i] = 0;
-                    for (int c = 1; c < 15; c++)
-                    {
-                        for (int t = 1; t < 15; t++)
-                        {
-                            if (a.spielerLand[c * 100 + t] == i)
-                            {
-                                if (a.rathaus[c * 100 + t] != 0)
-                                {
-                                    a.rathäuser[i]++;
-                                }
-                            }
-                        }
-                    }
+
                     if (a.spielerVerloren[i] == 1 && i > 0)
                     {
                         panel.gameObject.SetActive(true);
@@ -318,6 +305,7 @@ public class canvas : MonoBehaviour
                     if (a.rasse[a.anDerReihe - 1] == 3)
                     {
                         this.gameObject.transform.GetChild(3).gameObject.SetActive(true);
+                        this.gameObject.transform.GetChild(3).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Pfeilhagel: " + (100 - a.forschenFähigkeit[a.anDerReihe]) + "G";
                         this.gameObject.transform.GetChild(3).gameObject.transform.GetChild(0).gameObject.SetActive(true);
                         this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(5).gameObject.SetActive(true);
                         this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(5).gameObject.transform.position = this.gameObject.transform.GetChild(3).transform.position - new Vector3(0, Screen.height / 7f, 0);
@@ -330,6 +318,7 @@ public class canvas : MonoBehaviour
                     if (a.rasse[a.anDerReihe - 1] == 2)
                     {
                         this.gameObject.transform.GetChild(4).gameObject.transform.GetChild(0).gameObject.SetActive(true);
+                        this.gameObject.transform.GetChild(4).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Clonen: " + (100 - a.forschenFähigkeit[a.anDerReihe]) + "G";
                         this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(6).gameObject.SetActive(true);
                         this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(6).gameObject.transform.position = this.gameObject.transform.GetChild(4).transform.position - new Vector3(0, Screen.height / 7f, 0);
                         this.gameObject.transform.GetChild(1).transform.position = this.transform.position - new Vector3(0, Screen.height / 10, 0);
@@ -371,7 +360,7 @@ public class canvas : MonoBehaviour
                                 this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject.SetActive(true);
                                 this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).transform.position = this.transform.position - new Vector3(0, Screen.height / 5, 0);
                                 this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).transform.position = this.transform.position - new Vector3(0, Screen.height / 2.5f, 0);
-                                this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Plündern: " + ((a.rathaus[a.plündderLand] * 20 + a.kaserne[a.plündderLand] * 15) + (a.rathaus[a.zweitesAngriffsLand] * 20 + a.kaserne[a.zweitesAngriffsLand] * 15)) + "G";
+                                this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Plündern: " + ((a.rathaus[a.plündderLand] * (20 + a.forschenPlündern[a.anDerReihe]) + a.kaserne[a.plündderLand] * (15 + a.forschenPlündern[a.anDerReihe])) + (a.rathaus[a.zweitesAngriffsLand] * (20 + a.forschenPlündern[a.anDerReihe]) + a.kaserne[a.zweitesAngriffsLand] * (15 + a.forschenPlündern[a.anDerReihe]))) + "G";
                             }
                         }
                         if (a.gebäudePlündern)
@@ -445,19 +434,19 @@ public class canvas : MonoBehaviour
                     this.gameObject.transform.GetChild(9).gameObject.GetComponent<Text>().text = "Reiter: " + a.reiterAusbilden;
                     if (a.rasse[a.anDerReihe - 1] == 0)
                     {
-                        this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * 15 + a.babosAusbilden * 10 + a.reiterAusbilden * 25) + "G";
+                        this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * (15 - a.forschenBogenschützen[a.anDerReihe]) + a.babosAusbilden * (10 - a.forschenBabaren[a.anDerReihe]) + a.reiterAusbilden * (25 - a.forschenReiter[a.anDerReihe])) + "G";
                     }
                     if (a.rasse[a.anDerReihe - 1] == 1)
                     {
-                        this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * 15 + a.babosAusbilden * 10 + a.reiterAusbilden * 20) + "G";
+                        this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * (15 - a.forschenBogenschützen[a.anDerReihe]) + a.babosAusbilden * (10 - a.forschenBabaren[a.anDerReihe]) + a.reiterAusbilden * 20) + "G";
                     }
                     if (a.rasse[a.anDerReihe - 1] == 2)
                     {
-                        this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * 15 + a.babosAusbilden * 7 + a.reiterAusbilden * 25) + "G";
+                        this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * (15 - a.forschenBogenschützen[a.anDerReihe]) + a.babosAusbilden * 7 + a.reiterAusbilden * (25 - a.forschenReiter[a.anDerReihe])) + "G";
                     }
                     if (a.rasse[a.anDerReihe - 1] == 3)
                     {
-                        this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * 12 + a.babosAusbilden * 10 + a.reiterAusbilden * 25) + "G";
+                        this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * (15 - a.forschenBogenschützen[a.anDerReihe]) + a.babosAusbilden * (10 - a.forschenBabaren[a.anDerReihe]) + a.reiterAusbilden * (25 - a.forschenReiter[a.anDerReihe])) + "G";
                     }
                 }
             }
@@ -480,6 +469,7 @@ public class canvas : MonoBehaviour
             this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(4).gameObject.SetActive(true);
             this.gameObject.transform.GetChild(2).gameObject.transform.GetChild(2).gameObject.SetActive(true);
             this.gameObject.transform.GetChild(2).gameObject.transform.GetChild(1).gameObject.GetComponent<Text>().text = "";
+            this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(5).GetChild(0).gameObject.GetComponent<Text>().text = "Mauer: " + (100 - a.forschenFähigkeit[a.anDerReihe]) + "G";
             this.gameObject.transform.GetChild(1).gameObject.SetActive(false);
             this.gameObject.transform.GetChild(2).gameObject.SetActive(false);
 
@@ -514,9 +504,9 @@ public class canvas : MonoBehaviour
                     }
                     else
                     {
-                        this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).gameObject.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Rathaus: 30G";
-                        this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Kaserne: 40G";
-                        this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(3).gameObject.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Straße: 25G";
+                        this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).gameObject.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Rathaus: " + (30 - a.forschenRathausBauen[a.anDerReihe]) + "G";
+                        this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Kaserne: " + (40 - a.forschenKaserneBauen[a.anDerReihe]) + "G";
+                        this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(3).gameObject.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Straße: " + (25 - a.forschenStraßeBauen[a.anDerReihe]) + "G";
                     }
                     if (a.gebäude == 0)
                     {

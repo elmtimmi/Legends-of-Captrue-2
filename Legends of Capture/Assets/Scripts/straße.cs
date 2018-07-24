@@ -65,7 +65,8 @@ public class straße : MonoBehaviour
                     this.transform.position = new Vector3(a.StraßenLand1 % 100 * 100 - 50, 10, mapDistance - ((a.StraßenLand1 - a.StraßenLand1 % 100)));
                     if (a.spielerLand[a.StraßenLand2] == a.anDerReihe)
                     {
-                        if (a.StraßenLand2 == a.StraßenLand1 - 10 || a.StraßenLand2 == a.StraßenLand1 + 1 || a.StraßenLand2 == a.StraßenLand1 - 1 || a.StraßenLand2 == a.StraßenLand1 + 10)
+                        Debug.Log(a.StraßenLand2);
+                        if (a.StraßenLand2 == a.StraßenLand1 - 100 || a.StraßenLand2 == a.StraßenLand1 + 1 || a.StraßenLand2 == a.StraßenLand1 - 1 || a.StraßenLand2 == a.StraßenLand1 + 100)
                         {
                             a.Straßen[a.anDerReihe]++;
                             Straße.GetComponent<straße>().land1 = a.StraßenLand1;
