@@ -20,6 +20,7 @@ public class mainScript : MonoBehaviour
     public int land;
     public bool los;
     public int map;
+    public int kampagneMap;
     public bool landAuswählen;
     public float[] babaren;
     public float[] bogenschützen;
@@ -108,9 +109,28 @@ public class mainScript : MonoBehaviour
     public bool statistik;
     public GameObject map1;
     public GameObject map2;
+    public GameObject kampagneMap1;
     public GameObject Forschen;
     public GameObject ForschenButton;
     bool forschenAn;
+    public bool KIamZug;
+    public int[] KIAngriffland;
+    public int[] KIAngriffland2;
+    public int[] einmalAngreifen;
+    bool zweiterKIAngriff;
+    public int farbeKI;
+    public int zielLand;
+    public int[] zielLand1;
+    public int[] zielLand2;
+    public bool angriffAbbruch;
+    public GameObject KI1;
+    public GameObject kI2;
+    public GameObject Rathaus;
+
+    public int[] anfangsLand;
+
+    public bool[] spielerKI;
+
     public int[] forschenRunde;
     public int[] forschenRathaus;
     public int[] forschenLänder;
@@ -213,22 +233,32 @@ public class mainScript : MonoBehaviour
         forschenFähigkeit = new int[5];
         forschenPlündern = new int[5];
 
-        forschenRundePreis = 1;
-        forschenRathausPreis = 1;
-        forschenLänderPreis = 1;
+        einmalAngreifen = new int[11];
+        spielerKI = new bool[5];
+        anfangsLand = new int[5];
+        KIAngriffland = new int[5];
+        KIAngriffland2 = new int[5];
+        zielLand1 = new int[5];
+        zielLand2 = new int[5];
 
-        forschenBabarenPreis = 1;
-        forschenBogenschützenPreis = 1;
-        forschenReiterPreis = 1;
+        forschenRundePreis = 40;
+        forschenRathausPreis = 72;
+        forschenLänderPreis = 35;
 
-        forschenRathausBauenPreis = 1;
-        forschenKaserneBauenPreis = 1;
-        forschenStraßeBauenPreis = 1;
+        forschenBabarenPreis = 80;
+        forschenBogenschützenPreis = 80;
+        forschenReiterPreis = 80;
 
-        forschenFähigkeitPreis = 1;
+        forschenRathausBauenPreis = 35;
+        forschenKaserneBauenPreis = 30;
+        forschenStraßeBauenPreis = 30;
 
-        forschenPlündernPreis = 1;
+        forschenFähigkeitPreis = 25;
 
+        forschenPlündernPreis = 100;
+
+        //  spielerLand[501] = 1;
+        //  babaren[501] = 30;
     }
 
     // Update is called once per frame
@@ -243,7 +273,7 @@ public class mainScript : MonoBehaviour
     }
     void Update()
     {
-        Debug.Log("getland: " + getLand());
+        getLand(); //Debug.Log("getland: " + getLand()); // muss stehenbleiben, sonst kann man nichts bnauen
         rassen[0] = "Mensch";
         rassen[1] = "Ork";
         rassen[2] = "Untote";
@@ -255,13 +285,21 @@ public class mainScript : MonoBehaviour
             {
                 map1.SetActive(true);
                 map2.SetActive(false);
+                kampagneMap1.SetActive(false);
                 this.transform.position = new Vector3(340, 500, 260);
             }
             if (map == 2)
             {
                 map2.SetActive(true);
                 map1.SetActive(false);
+                kampagneMap1.SetActive(false);
                 this.transform.position = new Vector3(this.transform.position.x, 500, this.transform.position.z);
+            }
+            if (kampagneMap == 1)
+            {
+                map1.SetActive(false);
+                map2.SetActive(false);
+                kampagneMap1.SetActive(true);
             }
             gebäude = 1;
             canvas1.gameObject.SetActive(false);
@@ -324,53 +362,188 @@ public class mainScript : MonoBehaviour
                 canvas2.transform.GetChild(12).gameObject.SetActive(false);
 
             }
-            if (landAuswählen)
+            if (kampagneMap == 0)
             {
-                if (spieler1 == "")
+                if (landAuswählen)
                 {
-                    spieler1 = "Spieler1";
+                    if (spieler1 == "")
+                    {
+                        spieler1 = "Spieler1";
+                    }
+                    if (spieler2 == "")
+                    {
+                        spieler2 = "Spieler2";
+                    }
+                    if (spieler3 == "")
+                    {
+                        spieler3 = "Spieler3";
+                    }
+                    if (spieler4 == "")
+                    {
+                        spieler4 = "Spieler4";
+                    }
+                    canvas2.gameObject.SetActive(false);
+                    canvas3.gameObject.SetActive(true);
+                    if (spielerLandWählen == 1)
+                    {
+                        canvas3.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = spieler1;
+                    }
+                    if (spielerLandWählen == 2)
+                    {
+                        canvas3.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = spieler2;
+                    }
+                    if (spielerLandWählen == 3)
+                    {
+                        canvas3.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = spieler3;
+                    }
+                    if (spielerLandWählen == 4)
+                    {
+                        canvas3.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = spieler4;
+                    }
+                    if (getLand() != 0 && spielerLand[getLand()] == 0 || spielerKI[spielerLandWählen])
+                    {
+                        anDerReihe = spielerLandWählen;
+                        zugGemacht = false;
+                        if (!spielerKI[spielerLandWählen]) {
+                            spielerLand[getLand()] = spielerLandWählen;
+                             land = getLand();
+                            anfangsLand[anDerReihe] = getLand();
+                        }
+                        else
+                        {
+                            if (map == 1 && spielerLand[101] == 0)
+                            {
+                                spielerLand[101] = spielerLandWählen;
+                                land = 101;
+                            }
+                            else if (map == 1 && spielerLand[105] == 0)
+                            {
+                                spielerLand[105] = spielerLandWählen;
+                                land = 105;
+                            }
+                            else if (map == 1 && spielerLand[105] == 0)
+                            {
+                                spielerLand[501] = spielerLandWählen;
+                                land = 501;
+                            }
+                            else if (map == 1 && spielerLand[105] == 0)
+                            {
+                                spielerLand[505] = spielerLandWählen;
+                                land = 505;
+                            }
+                            Rathaus.GetComponent<gebäude>().land = land;
+                            Rathaus.GetComponent<gebäude>().RathausBauen();
+                            gebäude = 1;
+                            anDerReihe = spielerLandWählen;
+                            zugGemacht = false;
+                        }
+                        gebäude = 1;
+                        spielerLandWählen++;
+                        if (spielerLandWählen == spieler + 1)
+                        {
+                            los = true;
+                            gold[1] += 2;
+                        }
+                    }
                 }
-                if (spieler2 == "")
+            }
+            else
+            {
+                if (landAuswählen)
                 {
-                    spieler2 = "Spieler2";
-                }
-                if (spieler3 == "")
-                {
-                    spieler3 = "Spieler3";
-                }
-                if (spieler4 == "")
-                {
-                    spieler4 = "Spieler4";
-                }
-                canvas2.gameObject.SetActive(false);
-                canvas3.gameObject.SetActive(true);
-                if (spielerLandWählen == 1)
-                {
-                    canvas3.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = spieler1;
-                }
-                if (spielerLandWählen == 2)
-                {
-                    canvas3.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = spieler2;
-                }
-                if (spielerLandWählen == 3)
-                {
-                    canvas3.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = spieler3;
-                }
-                if (spielerLandWählen == 4)
-                {
-                    canvas3.transform.GetChild(0).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = spieler4;
-                }
-                if (getLand() != 0 && spielerLand[getLand()] == 0)
-                {
-                    anDerReihe = spielerLandWählen;
-                    zugGemacht = false;
-                    spielerLand[getLand()] = spielerLandWählen;
-                    land = getLand();
-                    gebäude = 1;
-                    spielerLandWählen++;
-                    if (spielerLandWählen == spieler + 1)
+                    if (spielerLandWählen == 1)
+                    {
+                        rasse[3] = 0;
+                        spielerLand[1203] = 1;
+                        anDerReihe = spielerLandWählen;
+                        zugGemacht = false;
+                        land = 1203;
+                        gebäude = 1;
+                        Rathaus.GetComponent<gebäude>().land = land;
+                        Rathaus.GetComponent<gebäude>().RathausBauen();
+                        rathaus[1205] = 1;
+                        spielerLandWählen++;
+                        for (int i = 0; i < 7; i++)
+                        {
+                            spielerLand[101 + i] = 4;
+                        }
+                        for (int i = 0; i < 7; i++)
+                        {
+                            spielerLand[201 + i] = 4;
+                        }
+                        for (int i = 0; i < 7; i++)
+                        {
+                            spielerLand[301 + i] = 4;
+                        }
+                        spielerLand[401] = 4;
+                        spielerLand[402] = 4;
+                        spielerLand[406] = 4;
+                        spielerLand[407] = 4;
+                        spielerLand[701] = 4;
+                        spielerLand[702] = 4;
+                        spielerLand[703] = 4;
+                        spielerLand[705] = 4;
+                        spielerLand[706] = 4;
+                        spielerLand[707] = 4;
+                        spielerLand[802] = 4;
+                        spielerLand[803] = 4;
+                        spielerLand[805] = 4;
+                        spielerLand[806] = 4;
+                        spielerLand[902] = 4;
+                        spielerLand[903] = 4;
+                        spielerLand[905] = 4;
+                        spielerLand[906] = 4;
+                    }
+                    else if (spielerLandWählen == 2)
+                    {
+                        spielerLand[1205] = 2;
+                        anDerReihe = spielerLandWählen;
+                        zugGemacht = false;
+                        land = 1205;
+                        gebäude = 1;
+                        rathaus[1205] = 1;
+                        Rathaus.GetComponent<gebäude>().land = land;
+                        Rathaus.GetComponent<gebäude>().RathausBauen();
+                        spielerLandWählen++;
+                    }
+                    else if (spielerLandWählen == 3)
+                    {
+                        anDerReihe = 1;
+                        zugGemacht = false;
+                        land = 1203;
+                        gebäude = 2;
+                        spielerLandWählen++;
+                    }
+                    else if (spielerLandWählen == 4)
+                    {
+                        anDerReihe = 1;
+                        zugGemacht = false;
+                        land = 1203;
+                        gebäude = 2;
+                        spielerLandWählen++;
+                    }
+                    else if (spielerLandWählen == 5)
+                    {
+                        anDerReihe = 2;
+                        zugGemacht = false;
+                        land = 1205;
+                        gebäude = 2;
+                        spielerLandWählen++;
+                    }
+                    else if (spielerLandWählen == 6)
+                    {
+                        anDerReihe = 2;
+                        zugGemacht = false;
+                        land = 1205;
+                        gebäude = 2;
+                        spielerLandWählen++;
+                    }
+                    else if (spielerLandWählen == 7)
                     {
                         los = true;
+                        zugGemacht = false;
+                        gold[1] += 52;
+                        gold[2] += 50;
                     }
                 }
             }
@@ -458,7 +631,6 @@ public class mainScript : MonoBehaviour
             if (spielerVerloren[s] == 0 && rathäuser[s] == 0 && los)
             {
                 spielerVerloren[s] = 1;
-                Debug.Log("hi: " + rathäuser[s] + "   " + s);
             }
         }
         if (rathäuser[anDerReihe] == 1 && einmalRot == 0)
@@ -626,7 +798,10 @@ public class mainScript : MonoBehaviour
             }
             else
             {
-                verteidigungsLand = getLand();
+                if (!KIamZug)
+                {
+                    verteidigungsLand = getLand();
+                }
             }
             if (!zugGemacht || zweiterAngriff == 0)
             {
@@ -857,19 +1032,22 @@ public class mainScript : MonoBehaviour
                                 }
                             }
                         }
-                        else
+                        else if (!KIamZug)
                         {
                             verteidigungsLand = angriffsLand;
                         }
                     }
-                    else if (spielerLand[verteidigungsLand] == anDerReihe)
+                    else if (spielerLand[verteidigungsLand] == anDerReihe && !KIamZug)
                     {
                         verteidigungsLand = angriffsLand;
                     }
                 }
                 else
                 {
-                    angriffsLand = 0;
+                    if (!KIamZug)
+                    {
+                        angriffsLand = 0;
+                    }
                 }
             }
             if (zweiterAngriff == 0 && aGewonnen && reiter[reiterLand] != 0)
@@ -908,7 +1086,10 @@ public class mainScript : MonoBehaviour
             }
             else
             {
-                verteidigungsLand = getLand();
+                if (!KIamZug)
+                {
+                    verteidigungsLand = getLand();
+                }
             }
             if (bogenschützen[angriffsLand] == 0)
             {
@@ -987,13 +1168,19 @@ public class mainScript : MonoBehaviour
                         }
                         else
                         {
-                            verteidigungsLand = angriffsLand;
+                            if (!KIamZug)
+                            {
+                                verteidigungsLand = angriffsLand;
+                            }
                         }
                     }
                 }
                 else
                 {
-                    angriffsLand = 0;
+                    if (!KIamZug)
+                    {
+                        angriffsLand = 0;
+                    }
                 }
             }
         }
@@ -1005,7 +1192,10 @@ public class mainScript : MonoBehaviour
             }
             else
             {
-                verteidigungsLand = getLand();
+                if (!KIamZug)
+                {
+                    verteidigungsLand = getLand();
+                }
             }
             if (!zugGemacht || reiterVerschoben == 0)
             {
@@ -1070,7 +1260,10 @@ public class mainScript : MonoBehaviour
                 }
                 else
                 {
-                    angriffsLand = 0;
+                    if (!KIamZug)
+                    {
+                        angriffsLand = 0;
+                    }
                 }
             }
         }
@@ -1167,7 +1360,7 @@ public class mainScript : MonoBehaviour
                 {
                     if (Input.GetMouseButton(0) && Input.touchCount != 2)
                     {
-                        if (map == 1)
+                        if (map == 1 || kampagneMap == 1)
                         {
                             this.transform.position -= new Vector3(Input.mousePosition.x - mausPosition.x, 0, Input.mousePosition.y - mausPosition.y) * 0.2f;
                         }
@@ -1293,17 +1486,6 @@ public class mainScript : MonoBehaviour
             // this.transform.position = new Vector3(2000, 160, 180);
             canvas1.gameObject.SetActive(false);
         }
-        if (map == 1)
-        {
-            if (anDerReihe == spielerLand[303])
-            {
-                ForschenButton.gameObject.SetActive(true);
-            }
-            else
-            {
-                ForschenButton.gameObject.SetActive(false);
-            }
-        }
         if (forschenRunde[anDerReihe] != 0)
         {
             Forschen.transform.GetChild(0).GetChild(1).GetComponent<Button>().interactable = false;
@@ -1376,53 +1558,65 @@ public class mainScript : MonoBehaviour
         {
             Forschen.transform.GetChild(0).GetChild(9).GetComponent<Button>().interactable = true;
         }
-        if (forschenFähigkeit[anDerReihe] > 0)
+        if (map == 1 && spielerLand[303] == anDerReihe || map == 2 && spielerLand[807] == anDerReihe || map == 2 && spielerLand[707] == anDerReihe)
         {
-            Forschen.transform.GetChild(0).GetChild(10).GetComponent<Button>().interactable = false;
+            if (forschenFähigkeit[anDerReihe] > 0)
+            {
+                Forschen.transform.GetChild(0).GetChild(10).GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                Forschen.transform.GetChild(0).GetChild(10).GetComponent<Button>().interactable = true;
+            }
+            if (forschenFähigkeit[anDerReihe] != 10)
+            {
+                Forschen.transform.GetChild(0).GetChild(11).GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                Forschen.transform.GetChild(0).GetChild(11).GetComponent<Button>().interactable = true;
+            }
+            if (forschenFähigkeit[anDerReihe] != 20)
+            {
+                Forschen.transform.GetChild(0).GetChild(12).GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                Forschen.transform.GetChild(0).GetChild(12).GetComponent<Button>().interactable = true;
+            }
+            if (forschenPlündern[anDerReihe] > 0)
+            {
+                Forschen.transform.GetChild(0).GetChild(13).GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                Forschen.transform.GetChild(0).GetChild(13).GetComponent<Button>().interactable = true;
+            }
+            if (forschenPlündern[anDerReihe] != 5)
+            {
+                Forschen.transform.GetChild(0).GetChild(14).GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                Forschen.transform.GetChild(0).GetChild(14).GetComponent<Button>().interactable = true;
+            }
+            if (forschenPlündern[anDerReihe] != 10)
+            {
+                Forschen.transform.GetChild(0).GetChild(15).GetComponent<Button>().interactable = false;
+            }
+            else
+            {
+                Forschen.transform.GetChild(0).GetChild(15).GetComponent<Button>().interactable = true;
+            }
         }
         else
-        {
-            Forschen.transform.GetChild(0).GetChild(10).GetComponent<Button>().interactable = true;
-        }
-        if (forschenFähigkeit[anDerReihe] != 10)
-        {
-            Forschen.transform.GetChild(0).GetChild(11).GetComponent<Button>().interactable = false;
-        }
-        else
-        {
-            Forschen.transform.GetChild(0).GetChild(11).GetComponent<Button>().interactable = true;
-        }
-        if (forschenFähigkeit[anDerReihe] != 20)
-        {
-            Forschen.transform.GetChild(0).GetChild(12).GetComponent<Button>().interactable = false;
-        }
-        else
-        {
-            Forschen.transform.GetChild(0).GetChild(12).GetComponent<Button>().interactable = true;
-        }
-        if (forschenPlündern[anDerReihe] > 0)
-        {
-            Forschen.transform.GetChild(0).GetChild(13).GetComponent<Button>().interactable = false;
-        }
-        else
-        {
-            Forschen.transform.GetChild(0).GetChild(13).GetComponent<Button>().interactable = true;
-        }
-        if (forschenPlündern[anDerReihe] != 5)
-        {
-            Forschen.transform.GetChild(0).GetChild(14).GetComponent<Button>().interactable = false;
-        }
-        else
-        {
-            Forschen.transform.GetChild(0).GetChild(14).GetComponent<Button>().interactable = true;
-        }
-        if (forschenPlündern[anDerReihe] != 10)
         {
             Forschen.transform.GetChild(0).GetChild(15).GetComponent<Button>().interactable = false;
-        }
-        else
-        {
-            Forschen.transform.GetChild(0).GetChild(15).GetComponent<Button>().interactable = true;
+            Forschen.transform.GetChild(0).GetChild(14).GetComponent<Button>().interactable = false;
+            Forschen.transform.GetChild(0).GetChild(13).GetComponent<Button>().interactable = false;
+            Forschen.transform.GetChild(0).GetChild(12).GetComponent<Button>().interactable = false;
+            Forschen.transform.GetChild(0).GetChild(11).GetComponent<Button>().interactable = false;
+            Forschen.transform.GetChild(0).GetChild(10).GetComponent<Button>().interactable = false;
         }
         if (rasse[anDerReihe - 1] == 0)
         {
@@ -1441,6 +1635,19 @@ public class mainScript : MonoBehaviour
         if (rasse[anDerReihe - 1] == 3)
         {
             Forschen.transform.GetChild(0).GetChild(5).GetComponent<Button>().interactable = false;
+        }
+        if (KIamZug && !zweiterKIAngriff)
+        {
+            nächsterSpieler();
+            anDerReihe = 1;
+            angreifen = false;
+            standardAngriff = false;
+            KIamZug = false;
+        }
+        else if (zweiterKIAngriff)
+        {
+            nächsterSpieler();
+            KIamZug = true;
         }
     }
     public int getLand()
@@ -1543,6 +1750,61 @@ public class mainScript : MonoBehaviour
                         land = 0;
                     }
                 }
+                if (kampagneMap == 1)
+                {
+                    if (hit.point.z > -100)
+                    {
+                        land = 1200;
+                    }
+                    if (hit.point.z > 0)
+                    {
+                        land = 1100;
+                    }
+                    if (hit.point.z > 100)
+                    {
+                        land = 1000;
+                    }
+                    if (hit.point.z > 200)
+                    {
+                        land = 900;
+                    }
+                    if (hit.point.z > 300)
+                    {
+                        land = 800;
+                    }
+                    if (hit.point.z > 400)
+                    {
+                        land = 700;
+                    }
+                    if (hit.point.z > 500)
+                    {
+                        land = 600;
+                    }
+                    if (hit.point.z > 600)
+                    {
+                        land = 500;
+                    }
+                    if (hit.point.z > 700)
+                    {
+                        land = 400;
+                    }
+                    if (hit.point.z > 800)
+                    {
+                        land = 300;
+                    }
+                    if (hit.point.z > 900)
+                    {
+                        land = 200;
+                    }
+                    if (hit.point.z > 1000)
+                    {
+                        land = 100;
+                    }
+                    if (hit.point.z > 1100 || hit.point.z < -100)
+                    {
+                        land = 0;
+                    }
+                }
                 if (land != 0)
                 {
                     if (map == 2)
@@ -1631,6 +1893,41 @@ public class mainScript : MonoBehaviour
                             land = 0;
                         }
                     }
+                    if (kampagneMap == 1)
+                    {
+                        if (hit.point.x > 600)
+                        {
+                            land += 7;
+                        }
+                        else if (hit.point.x > 500)
+                        {
+                            land += 6;
+                        }
+                        else if (hit.point.x > 400)
+                        {
+                            land += 5;
+                        }
+                        else if (hit.point.x > 300)
+                        {
+                            land += 4;
+                        }
+                        else if (hit.point.x > 200)
+                        {
+                            land += 3;
+                        }
+                        else if (hit.point.x > 100)
+                        {
+                            land += 2;
+                        }
+                        else if (hit.point.x > 0)
+                        {
+                            land += 1;
+                        }
+                        if (hit.point.x > 700 || hit.point.x < 0 || land == 404 || land == 504 || land == 604 || land == 704 || land == 804 || land == 904 || land == 1004 || land == 403 || land == 503 || land == 603 || land == 405 || land == 505 || land == 605 || land == 1201 || land == 1202 || land == 1206 || land == 1207 || land == 1101 || land == 1102 || land == 1106 || land == 1107 || land == 1001 || land == 1007 || land == 901 || land == 907 || land == 801 || land == 807)
+                        {
+                            land = 0;
+                        }
+                    }
                 }
             }
         }
@@ -1703,11 +2000,28 @@ public class mainScript : MonoBehaviour
         reiterBeschwören = false;
         zweitesAngriffsLand = 0;
         zweiZüge = false;
-        landNichtAngreifen[0] = 0;
-        landNichtAngreifen[1] = 0;
-        landNichtAngreifen[2] = 0;
+        if (!zweiterKIAngriff)
+        {
+            landNichtAngreifen[0] = 0;
+            landNichtAngreifen[1] = 0;
+            landNichtAngreifen[2] = 0;
+        }
         zahlAngriff = 0;
         mauergebaut = false;
+
+        if (zweiterKIAngriff)
+        {
+            KI2();
+            KIamZug = true;
+        }
+        else if (kampagneMap != 0 && !KIamZug && anDerReihe == 1)
+        {
+            KI();
+        }
+        if (kampagneMap == 0 && spielerKI[anDerReihe])
+        {
+            KI();
+        }
     }
     public void Angreifen()
     {
@@ -2120,7 +2434,7 @@ public class mainScript : MonoBehaviour
         Forschen.transform.GetChild(0).GetChild(14).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenPlündernPreis;
         Forschen.transform.GetChild(0).GetChild(15).GetChild(1).GetComponent<Text>().text = "Preis: " + forschenPlündernPreis;
 
-        
+
     }
     public void erforschen(int i)
     {
@@ -2200,5 +2514,640 @@ public class mainScript : MonoBehaviour
             gold[anDerReihe] -= forschenPlündernPreis;
             forschenPlündern[anDerReihe] = 15;
         }
+    }
+    public void kampagne()
+    {
+        if (kampagneMap == 1)
+        {
+            kampagneMap = 0;
+            map = 1;
+            KI1.gameObject.SetActive(true);
+            kI2.gameObject.SetActive(true);
+        }
+        else
+        if (kampagneMap == 0)
+        {
+            kampagneMap = 1;
+            map = 0;
+            farbeKI = 4;
+            KI1.gameObject.SetActive(false);
+            kI2.gameObject.SetActive(false);
+        }
+    }
+    public void KIToggle(int spieler)
+    {
+        spielerKI[spieler] = !spielerKI[spieler];
+    }
+
+    public void KI()
+    {
+        zielLand1[anDerReihe] = 1204;
+        zielLand2[anDerReihe] = 1204;
+        if (runde == 2 && anDerReihe == 1 && KIAngriffland[anDerReihe] == 0)
+        {
+            if (Random.Range(1, 3) == 1)
+            {
+                KIAngriffland[anDerReihe] = 903;
+              //  zielLand1 = 1203;
+            }
+            else
+            {
+                KIAngriffland[anDerReihe] = 905;
+             //   zielLand2 = 1205;
+            }
+        }
+        int land1 = 0;
+        int land2 = 0;
+        for (int i = 0; i < 15; i++)
+        {
+            for (int t = 0; t < 14; t++)
+            {
+                if (spielerLand[i * 100 + t] == farbeKI)
+                {
+                    if (babaren[i * 100 + t] != 0 || bogenschützen[i * 100 + t] != 0 || reiter[i * 100 + t] != 0)
+                    {
+                        if (spielerLand[i * 100 + t + 1] != farbeKI && spielerLand[i * 100 + t + 1] != 0 && feindTruppen(i * 100 + t + 1) != 0)
+                        {
+                            if (land1 == 0)
+                            {
+                                land1 = i * 100 + t;
+                            }
+                            else if (land2 == 0)
+                            {
+                                land2 = i * 100 + t;
+                            }
+                        }
+                        else if (spielerLand[i * 100 + t - 1] != farbeKI && spielerLand[i * 100 + t - 1] != 0 && feindTruppen(i * 100 + t - 1) != 0)
+                        {
+                            if (land1 == 0)
+                            {
+                                land1 = i * 100 + t;
+                            }
+                            else if (land2 == 0)
+                            {
+                                land2 = i * 100 + t;
+                            }
+                        }
+                        else if (spielerLand[i * 100 + t + 100] != farbeKI && spielerLand[i * 100 + t + 100] != 0 && feindTruppen(i * 100 + t + 100) != 0)
+                        {
+                            if (land1 == 0)
+                            {
+                                land1 = i * 100 + t;
+                            }
+                            else if (land2 == 0)
+                            {
+                                land2 = i * 100 + t;
+                            }
+                        }
+                        else if (spielerLand[i * 100 + t - 100] != farbeKI && spielerLand[i * 100 + t - 100] != 0 && feindTruppen(i * 100 + t - 100) != 0)
+                        {
+                            if (land1 == 0)
+                            {
+                                land1 = i * 100 + t;
+                            }
+                            else if (land2 == 0)
+                            {
+                                land2 = i * 100 + t;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (land1 != 0)
+        {
+            if (KIAngriffland[anDerReihe] == 0)
+            {
+                KIAngriffland[anDerReihe] = land1;
+            }
+            else if (KIAngriffland2[anDerReihe] == 0)
+            {
+                KIAngriffland2[anDerReihe] = land1;
+            }
+        }
+        if (land2 != 0)
+        {
+            if (KIAngriffland[anDerReihe] == 0)
+            {
+                KIAngriffland[anDerReihe] = land2;
+            }
+            else if (KIAngriffland2[anDerReihe] == 0)
+            {
+                KIAngriffland2[anDerReihe] = land2;
+            }
+        }
+
+        if (spielerLand[903] != farbeKI && einmalAngreifen[0] == 0 || spielerLand[902] != farbeKI && einmalAngreifen[0] == 0)
+        {
+            if (KIAngriffland[anDerReihe] == 0)
+            {
+                KIAngriffland[anDerReihe] = 703;
+                einmalAngreifen[0] = 1;
+            }
+            else if (KIAngriffland2[anDerReihe] == 0)
+            {
+                KIAngriffland2[anDerReihe] = 703;
+                einmalAngreifen[0] = 1;
+            }
+        }
+        if (spielerLand[905] != farbeKI && einmalAngreifen[1] == 0 || spielerLand[906] != farbeKI && einmalAngreifen[1] == 0)
+        {
+            if (KIAngriffland[anDerReihe] == 0)
+            {
+                KIAngriffland[anDerReihe] = 705;
+                einmalAngreifen[1] = 1;
+            }
+            else if (KIAngriffland2[anDerReihe] == 0)
+            {
+                KIAngriffland2[anDerReihe] = 705;
+                einmalAngreifen[1] = 1;
+            }
+        }
+        if (spielerLand[401] != farbeKI || spielerLand[402] != farbeKI)
+        {
+            if (spielerLand[202] == farbeKI)
+            {
+                babaren[202] += 2;
+            }
+            if (KIAngriffland[anDerReihe] == 0 && einmalAngreifen[4] == 0)
+            {
+                babaren[202] += 8;
+                KIAngriffland[anDerReihe] = 202;
+                einmalAngreifen[4] = 1;
+            }
+            else if (KIAngriffland2[anDerReihe] == 0 && einmalAngreifen[4] == 0)
+            {
+                babaren[202] += 8;
+                KIAngriffland2[anDerReihe] = 202;
+                einmalAngreifen[4] = 1;
+            }
+        }
+        if (spielerLand[406] != farbeKI || spielerLand[407] != farbeKI)
+        {
+            if (spielerLand[206] == farbeKI) {
+                babaren[206] += 2;
+            }
+            if (KIAngriffland[anDerReihe] == 0 && einmalAngreifen[5] == 0)
+            {
+                babaren[206] += 8;
+                KIAngriffland[anDerReihe] = 203;
+                einmalAngreifen[4] = 1;
+            }
+            else if (KIAngriffland2[anDerReihe] == 0 && einmalAngreifen[5] == 0)
+            {
+                babaren[206] += 8;
+                KIAngriffland2[anDerReihe] = 206;
+                einmalAngreifen[5] = 1;
+            }
+        }
+        if (spielerLand[KIAngriffland[anDerReihe]] == farbeKI)
+        {
+            if (babaren[KIAngriffland[anDerReihe]] != 0 || bogenschützen[KIAngriffland[anDerReihe]] != 0 || reiter[KIAngriffland[anDerReihe]] != 0)
+            {
+                angriffKI(KIAngriffland[anDerReihe], true);
+            }
+            else
+            {
+                KIAngriffland[anDerReihe] = 0;
+            }
+        }
+        else
+        {
+            KIAngriffland[anDerReihe] = 0;
+        }
+        if (runde % 3 == 0)
+        {
+            if (spielerLand[703] == farbeKI)
+            {
+                babaren[703] += 2;
+            }
+            if (spielerLand[705] == farbeKI)
+            {
+                babaren[705] += 2;
+            }
+        }
+        if (KIAngriffland2[anDerReihe] != 0)
+        {
+            zweiterKIAngriff = true;
+        }
+    }
+    public void KI2()
+    {
+        if (spielerLand[KIAngriffland2[anDerReihe]] == farbeKI)
+        {
+            if (babaren[KIAngriffland2[anDerReihe]] != 0 || bogenschützen[KIAngriffland2[anDerReihe]] != 0 || reiter[KIAngriffland2[anDerReihe]] != 0)
+            {
+                angriffKI(KIAngriffland2[anDerReihe], false);
+            }
+            else
+            {
+                KIAngriffland2[anDerReihe] = 0;
+            }
+        }
+        else
+        {
+            KIAngriffland2[anDerReihe] = 0;
+        }
+        zweiterKIAngriff = false;
+    }
+    public void angriffKI(int land, bool angriff1)
+    {
+        bool oben = false;
+        bool unten = false;
+        bool links = false;
+        bool rechts = false;
+        bool KIangreifen = false;
+        bool flucht = false;
+        float truppen = babaren[land] + bogenschützen[land] + reiter[land];
+
+        if (angriff1)
+        {
+            zielLand = zielLand1[anDerReihe];
+        }
+        else
+        {
+            zielLand = zielLand2[anDerReihe];
+        }
+        // Truppen/Infrastruktur in der Nähe, die man zerstörem kann?
+        if (truppen > rathaus[land + 1] + feindTruppen(land + 1) && spielerLand[land + 1] != farbeKI && spielerLand[land + 1] != 0 && rathaus[land + 1] + feindTruppen(land + 1) + kaserne[land + 1] > 1)
+        {
+            zielLand = land + 1;
+        }else if (truppen > rathaus[land + 100] + feindTruppen(land + 100) && spielerLand[land + 100] != farbeKI && spielerLand[land + 100] != 0 && rathaus[land + 100] + feindTruppen(land + 100) + kaserne[land + 100] > 1)
+        {
+            zielLand = land + 100;
+        }
+        else if (truppen > rathaus[land - 1] + feindTruppen(land - 1) && spielerLand[land - 1] != farbeKI && spielerLand[land - 1] != 0 && rathaus[land - 1] + feindTruppen(land - 1) + kaserne[land - 1] > 1)
+        {
+            zielLand = land - 1;
+        }
+        else if (truppen > rathaus[land - 100] + feindTruppen(land - 100) && spielerLand[land - 100] != farbeKI && spielerLand[land - 100] != 0 && rathaus[land - 100] + feindTruppen(land - 100) + kaserne[land - 100] > 1)
+        {
+            zielLand = land - 100;
+        }
+        else if (truppen > rathaus[land - 101] + feindTruppen(land - 101) && spielerLand[land - 101] != farbeKI && spielerLand[land - 101] != 0 && rathaus[land - 101] + feindTruppen(land - 101) + kaserne[land - 101] > 1)
+        {
+            zielLand = land - 101;
+        }
+        else if (truppen > rathaus[land - 99] + feindTruppen(land - 99) && spielerLand[land - 99] != farbeKI && spielerLand[land - 99] != 0 && rathaus[land - 99] + feindTruppen(land - 99) + kaserne[land - 99] > 1)
+        {
+            zielLand = land - 99;
+        }
+        else if (truppen > rathaus[land + 101] + feindTruppen(land + 101) && spielerLand[land + 101] != farbeKI && spielerLand[land + 101] != 0 && rathaus[land + 101] + feindTruppen(land + 101) + kaserne[land + 101] > 1)
+        {
+            zielLand = land + 101;
+        }
+        else if (truppen > rathaus[land + 99] + feindTruppen(land + 99) && spielerLand[land + 99] != farbeKI && spielerLand[land + 99] != 0 && rathaus[land + 99] + feindTruppen(land + 99) + kaserne[land + 99] > 1)
+        {
+            zielLand = land + 99;
+        }
+
+        if (landMöglich(bestesLand(land, 1)) && landSicher(bestesLand(land, 1), babaren[land] + bogenschützen[land] + reiter[land], angriff1))
+        {
+            KIangreifen = true;
+            angriffsLand = land;
+            verteidigungsLand = bestesLand(land, 1);
+            landNichtAngreifen[1] = bestesLand(land, 1);
+            if (angriff1)
+            {
+                KIAngriffland[anDerReihe] = bestesLand(land, 1);
+            }
+            else
+            {
+                KIAngriffland2[anDerReihe] = bestesLand(land, 1);
+            }
+        }
+        else if (landMöglich(bestesLand(land, 2)) && landSicher(bestesLand(land, 2), babaren[land] + bogenschützen[land] + reiter[land], angriff1))
+        {
+            KIangreifen = true;
+            angriffsLand = land;
+            verteidigungsLand = bestesLand(land, 2);
+            landNichtAngreifen[1] = bestesLand(land, 2);
+            if (angriff1)
+            {
+                KIAngriffland[anDerReihe] = bestesLand(land, 2);
+            }
+            else
+            {
+                KIAngriffland2[anDerReihe] = bestesLand(land, 2);
+            }
+        }
+        else if (landMöglich(bestesLand(land, 3)) && landSicher(bestesLand(land, 3), babaren[land] + bogenschützen[land] + reiter[land], angriff1))
+        {
+            KIangreifen = true;
+            angriffsLand = land;
+            verteidigungsLand = bestesLand(land, 3);
+            landNichtAngreifen[1] = bestesLand(land, 3);
+            if (angriff1)
+            {
+                KIAngriffland[anDerReihe] = bestesLand(land, 3);
+            }
+            else
+            {
+                KIAngriffland2[anDerReihe] = bestesLand(land, 3);
+            }
+        }
+        else if (landMöglich(bestesLand(land, 4)) && landSicher(bestesLand(land, 4), babaren[land] + bogenschützen[land] + reiter[land], angriff1))
+        {
+            KIangreifen = true;
+            angriffsLand = land;
+            verteidigungsLand = bestesLand(land, 4);
+            landNichtAngreifen[1] = bestesLand(land, 4);
+            if (angriff1)
+            {
+                KIAngriffland[anDerReihe] = bestesLand(land, 4);
+            }
+            else
+            {
+                KIAngriffland2[anDerReihe] = bestesLand(land, 4);
+            }
+        }
+        if (KIangreifen && angriffAbbruch)
+        {
+            if (angriff1)
+            {
+                KIAngriffland[anDerReihe] = 0;
+                angriffAbbruch = false;
+            }
+            else
+            {
+                KIAngriffland2[anDerReihe] = 0;
+                angriffAbbruch = false;
+            }
+        }
+
+
+        if (babaren[land] + bogenschützen[land] + reiter[land] > 1)
+        {
+            if (bogenschützen[land] > 2)
+            {
+                if (babaren[land + 100] != 0 || bogenschützen[land + 100] != 0 || reiter[land + 100] != 0)
+                {
+                    if (spielerLand[land + 100] != farbeKI) {
+                        unten = true;
+                        KIangreifen = true;
+                        bogenschützenAngriff = true;
+                    }
+                }
+                if (babaren[land + 1] != 0 || bogenschützen[land + 1] != 0 || reiter[land + 1] != 0)
+                {
+                    if (spielerLand[land + 1] != farbeKI)
+                    {
+                        rechts = true;
+                        KIangreifen = true;
+                        bogenschützenAngriff = true;
+                    }
+                }
+                if (babaren[land - 1] != 0 || bogenschützen[land - 1] != 0 || reiter[land - 1] != 0)
+                {
+                    if (spielerLand[land - 1] != farbeKI)
+                    {
+                        links = true;
+                        KIangreifen = true;
+                        bogenschützenAngriff = true;
+                    }
+                }
+                if (babaren[land - 100] != 0 || bogenschützen[land - 100] != 0 || reiter[land - 100] != 0)
+                {
+                    if (spielerLand[land - 100] != farbeKI)
+                    {
+                        oben = true;
+                        KIangreifen = true;
+                        bogenschützenAngriff = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (angriff1)
+            {
+                KIAngriffland[anDerReihe] = 0;
+            //    zielLand1 = 0;
+            }
+            else
+            {
+                KIAngriffland2[anDerReihe] = 0;
+             //   zielLand2 = 0;
+            }
+        }
+
+        if (KIangreifen) {
+            zugGemacht = false;
+            verschieben = true;
+            angreifen = true;
+            if (!bogenschützenAngriff) {
+                standardAngriff = true;
+            }
+            angriffsLand = land;
+            if (unten) {
+                verteidigungsLand = land + 100;
+            }
+            if (oben)
+            {
+                verteidigungsLand = land - 100;
+            }
+
+            if (rechts)
+            {
+                verteidigungsLand = land + 1;
+            }
+
+            if (links)
+            {
+                verteidigungsLand = land - 1;
+            }
+            anDerReihe = farbeKI;
+            KIamZug = true;
+            if (!bogenschützenAngriff) {
+                if (angriff1)
+                {
+                    if (unten)
+                    {
+                        KIAngriffland[anDerReihe] += 100;
+                    }
+                    if (oben)
+                    {
+                        KIAngriffland[anDerReihe] -= 100;
+                    }
+                    if (rechts)
+                    {
+                        KIAngriffland[anDerReihe] += 1;
+                    }
+                    if (links)
+                    {
+                        KIAngriffland[anDerReihe] -= 1;
+                    }
+                    if (flucht)
+                    {
+                        KIAngriffland[anDerReihe] = 0;
+                    }
+                }
+                else
+                {
+                    if (unten)
+                    {
+                        KIAngriffland2[anDerReihe] += 100;
+                    }
+                    if (oben)
+                    {
+                        KIAngriffland2[anDerReihe] -= 100;
+                    }
+                    if (rechts)
+                    {
+                        KIAngriffland2[anDerReihe] += 1;
+                    }
+                    if (links)
+                    {
+                        KIAngriffland2[anDerReihe] -= 1;
+                    }
+                    if (flucht)
+                    {
+                        KIAngriffland2[anDerReihe] = 0;
+                    }
+                }
+            }
+        }
+    }
+    public bool landMöglich(int land)
+    {
+        bool möglich = false;
+        if (kampagneMap == 1 && land % 100 < 8 && land % 100 > 0 && land < 1300 && land > 0 && land != 801 && land != 901 && land != 1001 && land != 807 && land != 907 && land != 1007 && land != 1102 && land != 1202 && land != 1106 && land != 1206 && land != 403 && land != 404 && land != 405 && land != 503 && land != 505 && land != 603 && land != 605 && land != 704 && land != 804 && land != 904 && land != 1004)
+        {
+            möglich = true;
+        }
+        if (map == 1 && land % 100 < 6 && land % 100 > 0 && land < 600 && land > 0)
+        {
+            möglich = true;
+        }
+        return möglich;
+    }
+    public bool landSicher(int land, float truppen, bool angriff1)
+    {
+        bool sicher = false;
+        float feindTruppen = 0;
+        if (spielerLand[land + 1] != farbeKI)
+        {
+            feindTruppen += babaren[land + 1] + bogenschützen[land + 1] + reiter[land + 1];
+        }
+        if (spielerLand[land + 100] != farbeKI)
+        {
+            feindTruppen += babaren[land + 100] + bogenschützen[land + 100] + reiter[land + 100];
+        }
+        if (spielerLand[land - 1] != farbeKI)
+        {
+            feindTruppen += babaren[land - 1] + bogenschützen[land - 1] + reiter[land - 1];
+        }
+        if (spielerLand[land - 100] != farbeKI)
+        {
+            feindTruppen += babaren[land - 100] + bogenschützen[land - 100] + reiter[land - 100];
+        }
+        if (spielerLand[land] != farbeKI)
+        {
+            feindTruppen += babaren[land] + bogenschützen[land] + reiter[land] + rathaus[land];
+        }
+        if (truppen > feindTruppen)
+        {
+            sicher = true;
+        }
+        else
+        {
+            if (angriff1)
+            {
+                Debug.Log("mathis");
+                KIAngriffland[anDerReihe] = 0;
+                angriffAbbruch = true;
+            }
+            else
+            {
+                KIAngriffland2[anDerReihe] = 0;
+                angriffAbbruch = true;
+            }
+        }
+        return sicher;
+    }
+    public int bestesLand(int land, int priorität)
+    {
+        int bestesLand = 0;
+        int prioritätOben = 4;
+        int prioritätUnten = 4;
+        int prioritätLinks = 4;
+        int prioritätRechts = 4;
+
+        int nachUnten = ((zielLand - zielLand % 100) - (land - land % 100)) / 100;
+        int nachRechts = (zielLand % 100) - (land % 100);
+        int nachOben = -nachUnten;
+        int nachLinks = -nachRechts;
+
+        if (nachUnten > nachOben)
+        {
+            prioritätUnten--;
+        }
+        else
+        {
+            prioritätOben--;
+        }
+        if (nachUnten > nachRechts)
+        {
+            prioritätUnten--;
+        }
+        else
+        {
+            prioritätRechts--;
+        }
+        if (nachUnten > nachLinks)
+        {
+            prioritätUnten--;
+        }
+        else
+        {
+            prioritätLinks--;
+        }
+        if (nachRechts > nachLinks)
+        {
+            prioritätRechts--;
+        }
+        else
+        {
+            prioritätLinks--;
+        }
+        if (nachRechts > nachOben)
+        {
+            prioritätRechts--;
+        }
+        else
+        {
+            prioritätOben--;
+        }
+        if (nachLinks > nachOben)
+        {
+            prioritätLinks--;
+        }
+        else
+        {
+            prioritätOben--;
+        }
+
+        if (priorität == prioritätOben)
+        {
+            bestesLand = land - 100;
+        }
+        else if (priorität == prioritätRechts)
+        {
+            bestesLand = land + 1;
+        }
+        else if (priorität == prioritätLinks)
+        {
+            bestesLand = land - 1;
+        }
+        else if (priorität == prioritätUnten)
+        {
+            bestesLand = land + 100;
+        }
+        return bestesLand;
+    }
+    public float feindTruppen(int land)
+    {
+        float feindTruppen = babaren[land] + bogenschützen[land] + reiter[land];
+        return feindTruppen;
     }
 }

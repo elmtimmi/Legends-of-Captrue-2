@@ -60,7 +60,7 @@ public class canvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (verloren)
+        if (verloren && a.kampagneMap == 0)
         {
             panel.gameObject.SetActive(false);
             if (a.los)
@@ -108,19 +108,29 @@ public class canvas : MonoBehaviour
                             {
                                 if (a.rathäuser[i] == 0)
                                 {
-                                  //  a.spielerVerloren[i] = 1;
+                                    //  a.spielerVerloren[i] = 1;
                                 }
                             }
                         }
                         else
                         {
                             verlorenAnzeigen--;
+
                         }
                     }
                 }
             }
         }
-        if (gewonnen && a.los)
+        if (gewonnen && a.kampagneMap != 0)
+        {
+            if (a.spielerVerloren[1] == 1 || a.spielerVerloren[2] == 1)
+            {
+                panel.gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Spieler haben verloren!";
+                this.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+            }
+        }
+        if (gewonnen && a.los && a.kampagneMap == 0)
         {
             int spielerLeben = 0;
             for (int i = 1; i < a.spieler + 1; i++)
@@ -163,6 +173,16 @@ public class canvas : MonoBehaviour
             else
             {
                 this.transform.position = new Vector3(Screen.width * 2, Screen.height / 2, 0);
+            }
+        }
+        if (a.kampagneMap > 0)
+        {
+            if (a.rathäuser[4] == 0 && a.runde > 1)
+            {
+                panel.gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Gegner Besiegt!";
+                this.transform.position = new Vector3(Screen.width / 2, Screen.height / 2, 0);
+
             }
         }
         if (spieler1 || spieler2 || spieler3 || spieler4)

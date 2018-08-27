@@ -40,8 +40,12 @@ public class pfeil : MonoBehaviour
                 {
                     this.transform.position = new Vector3(a.angriffsLand % 100 * 100 - 50, 10, 1450 - ((a.angriffsLand - a.angriffsLand % 100)));
                 }
+                if (a.kampagneMap == 1)
+                {
+                    this.transform.position = new Vector3(a.angriffsLand % 100 * 100 - 50, 10, 1150 - ((a.angriffsLand - a.angriffsLand % 100)));
+                }
             }
-            else
+            else if(!a.KIamZug)
             {
                     a.angriffsLand = 0;
                     a.verteidigungsLand = 0;
@@ -52,14 +56,14 @@ public class pfeil : MonoBehaviour
             this.gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().enabled = false;
             if (a.angreifen)
             {
-                if (!a.bogenschützenAngriff)
+                if (!a.bogenschützenAngriff && !a.KIamZug)
                 {
                     a.angriffsLand = 0;
                    a.verteidigungsLand = 0;
                 }
                 else
                 {
-                    if (!a.zugGemacht && a.spielerLand[a.verteidigungsLand] != 0 && a.bogenschützen[a.angriffsLand] > 0)
+                    if (!a.zugGemacht && a.spielerLand[a.verteidigungsLand] != 0 && a.bogenschützen[a.angriffsLand] > 0 && !a.KIamZug)
                     {
                         a.verteidigungsLand = 0;
                         this.gameObject.transform.GetChild(0).GetComponent<MeshRenderer>().enabled = true;
@@ -67,7 +71,7 @@ public class pfeil : MonoBehaviour
                     }
                 }
             }
-            if (a.verschieben)
+            if (a.verschieben && !a.KIamZug)
             {
                a.verteidigungsLand = a.angriffsLand;
             }

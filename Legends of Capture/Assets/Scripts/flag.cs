@@ -77,6 +77,18 @@ public class flag : MonoBehaviour
                     }
                 }
             }
+            if (a.kampagneMap == 1)
+            {
+                for (int i = 1; i < 13; i++)
+                {
+                    for (int t = 1; t < 8; t++)
+                    {
+                        x = t;
+                        z = 13 - i;
+                        Instantiate(this, new Vector3(t * 100 - 45, 20, i * 100 - 135), this.transform.rotation);
+                    }
+                }
+            }
         }
     }
 }

@@ -28,6 +28,10 @@ public class straße : MonoBehaviour
         {
             mapDistance = 1450;
         }
+        if (a.kampagneMap == 1)
+        {
+            mapDistance = 1150;
+        }
         if (this.transform.name == "StraßenDouble(Clone)")
         {
             if(a.straße[land1] == 0)
