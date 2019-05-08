@@ -9,6 +9,11 @@ public class gebäude : MonoBehaviour
     public bool rathaus;
     public bool kaserne;
     public bool straße;
+    public bool goldmine;
+    public bool festung;
+    public bool tempel;
+    public bool weltwunder;
+    public int runde;
     public int land;
     public GameObject rathausMensch;
     public GameObject rathausOrk;
@@ -25,7 +30,9 @@ public class gebäude : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        a = mainCamera.GetComponent<mainScript>();
+        if (mainCamera != null) {
+            a = mainCamera.GetComponent<mainScript>();
+        }
     }
 
     // Update is called once per frame
@@ -43,7 +50,7 @@ public class gebäude : MonoBehaviour
         {
             mapDistance = 1150;
         }
-        if (this.transform.name != "Kaserne" && this.transform.name != "Rathaus" && this.transform.name != "Straße")
+        if (this.transform.name != "Kaserne" && this.transform.name != "Rathaus" && this.transform.name != "Straße" && this.transform.name != "Goldmine" && this.transform.name != "Festung" && this.transform.name != "Tempel" && this.transform.name != "Weltwunder")
         {
             if (kaserne && a.kaserne[land] == 0)
             {
@@ -59,8 +66,90 @@ public class gebäude : MonoBehaviour
                 Debug.Log("AnderReihe: " + a.spielerLand[land]);
                 // Destroy(this.gameObject);
             }
+            if (goldmine && a.goldmine[land] == 0)
+            {
+                Destroy(this.gameObject);
+            }
+            if (tempel && a.tempelLand[land] == 0)
+            {
+                Destroy(this.gameObject);
+            }
+            if (festung && a.festung[land] == 0)
+            {
+                Destroy(this.gameObject);
+            }
+            if (weltwunder && a.weltwunderLand[land] == 0)
+            {
+                Destroy(this.gameObject);
+            }
+            if (weltwunder)
+            {
+                if (a.weltwunderLand[land] >= 2)
+                {
+                    this.transform.GetChild(1).gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.transform.GetChild(1).gameObject.SetActive(false);
+                }
+                if (a.weltwunderLand[land] >= 3)
+                {
+                    this.transform.GetChild(2).gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.transform.GetChild(2).gameObject.SetActive(false);
+                }
+                if (a.weltwunderLand[land] >= 4)
+                {
+                    this.transform.GetChild(3).gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.transform.GetChild(3).gameObject.SetActive(false);
+                }
+                if (a.weltwunderLand[land] >= 5)
+                {
+                    this.transform.GetChild(4).gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.transform.GetChild(4).gameObject.SetActive(false);
+                }
+                if (a.weltwunderLand[land] >= 6)
+                {
+                    this.transform.GetChild(5).gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.transform.GetChild(5).gameObject.SetActive(false);
+                }
+                if (a.weltwunderLand[land] >= 7)
+                {
+                    this.transform.GetChild(6).gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.transform.GetChild(6).gameObject.SetActive(false);
+                }
+                if (a.weltwunderLand[land] >= 8)
+                {
+                    this.transform.GetChild(7).gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.transform.GetChild(7).gameObject.SetActive(false);
+                }
+                if (a.weltwunderLand[land] >= 9)
+                {
+                    this.transform.GetChild(8).gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.transform.GetChild(8).gameObject.SetActive(false);
+                }
+            }
         }
-
         else if (a.gebäude != 0 && !a.zugGemacht)
         {
             if (this.transform.name == "Rathaus" && rathaus && a.gebäude == 1)
@@ -113,7 +202,7 @@ public class gebäude : MonoBehaviour
                     a.rathaus[land] = 1;
                     a.anDerReihe++;
                 }
-                if (land != 0 && a.rathaus[land] == 0 && a.spielerLand[land] == a.anDerReihe)
+                if (land != 0 && a.rathaus[land] == 0 && a.spielerLand[land] == a.anDerReihe && a.weltwunderLand[land] == 0)
                 {
                     Rathaus.GetComponent<gebäude>().mainCamera = mainCamera;
                     Rathaus.GetComponent<gebäude>().land = land;
@@ -140,7 +229,7 @@ public class gebäude : MonoBehaviour
                 {
                     Kaserne = KaserneElf;
                 }
-                if (!a.los && a.kampagneMap == 0)
+                if (!a.los && a.kampagneMap == 0 && !a.KIamZug)
                 {
                     land = a.getLand();
                 }
@@ -148,28 +237,31 @@ public class gebäude : MonoBehaviour
                 {
                     land = a.land;
                 }
-                if (land != 0 && a.kaserne[land] < 4 && a.spielerLand[land] == a.anDerReihe)
+                if (land != 0 && a.spielerLand[land] == a.anDerReihe)
                 {
-                    Kaserne.GetComponent<gebäude>().mainCamera = mainCamera;
-                    Kaserne.GetComponent<gebäude>().land = land;
-                    if (a.kaserne[land] == 0)
+                    if (a.kaserne[land] < 4 && a.goldmine[land] == 0 && a.weltwunderLand[land] == 0 && a.tempelLand[land] == 0|| a.kaserne[land] < 2 && a.goldmine[land] + a.tempelLand[land] == 1 && a.weltwunderLand[land] == 0)
                     {
-                        Instantiate(Kaserne, new Vector3(land % 100 * 100 - 75, 1, mapDistance - ((a.land - a.land % 100) - 25)), this.transform.rotation);
+                        Kaserne.GetComponent<gebäude>().mainCamera = mainCamera;
+                        Kaserne.GetComponent<gebäude>().land = land;
+                        if (a.kaserne[land] == 0 && a.goldmine[land] == 0)
+                        {
+                            Instantiate(Kaserne, new Vector3(land % 100 * 100 - 75, 1, mapDistance - ((a.land - a.land % 100) - 25)), this.transform.rotation);
+                        }
+                        if (a.kaserne[land] == 1 && a.goldmine[land] == 0)
+                        {
+                            Instantiate(Kaserne, new Vector3(land % 100 * 100 - 25, 1, mapDistance - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, 90, 0));
+                        }
+                        if (a.kaserne[land] == 2 || a.goldmine[land] + a.tempelLand[land] == 1 && a.kaserne[land] == 0)
+                        {
+                            Instantiate(Kaserne, new Vector3(land % 100 * 100 - 25, 1, mapDistance - 50 - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, 180, 0));
+                        }
+                        if (a.kaserne[land] == 3 || a.goldmine[land] + a.tempelLand[land] == 1 && a.kaserne[land] == 1)
+                        {
+                            Instantiate(Kaserne, new Vector3(land % 100 * 100 - 75, 1, mapDistance - 50 - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, -90, 0));
+                        }
+                        a.kaserne[land]++;
+                        a.zugGemacht = true;
                     }
-                    if (a.kaserne[land] == 1)
-                    {
-                        Instantiate(Kaserne, new Vector3(land % 100 * 100 - 25, 1, mapDistance - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, 90, 0));
-                    }
-                    if (a.kaserne[land] == 2)
-                    {
-                        Instantiate(Kaserne, new Vector3(land % 100 * 100 - 25, 1, mapDistance - 50 - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, 180, 0));
-                    }
-                    if (a.kaserne[land] == 3)
-                    {
-                        Instantiate(Kaserne, new Vector3(land % 100 * 100 - 75, 1, mapDistance - 50 - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, -90, 0));
-                    }
-                    a.kaserne[land]++;
-                    a.zugGemacht = true;
                 }
             }
             if (a.los && !einmalKampagne && a.kampagneMap == 1)
@@ -281,6 +373,85 @@ public class gebäude : MonoBehaviour
                 }
             }
         }
+        else if (a.entwicklungsGebäude != 0 && !a.zugGemacht)
+        {
+            if (this.transform.name == "Goldmine" && goldmine && a.entwicklungsGebäude == 1)
+            {
+                land = a.land;
+                if (land != 0 && a.goldmine[land] + a.tempelLand[land]< 2 && a.spielerLand[land] == a.anDerReihe && a.weltwunderLand[land] == 0)
+                {
+                    if (a.goldmine[land] + a.tempelLand[land] == 0 && a.kaserne[land] == 0)
+                    {
+                        GameObject Goldmin = Instantiate(this.gameObject, new Vector3(land % 100 * 100 - 75, 1, mapDistance - ((a.land - a.land % 100) - 10)), this.transform.rotation);
+                    }
+                    else if (a.goldmine[land] + a.tempelLand[land] == 1 || a.kaserne[land] < 3 && a.goldmine[land] + a.tempelLand[land] == 0)
+                    {
+                        GameObject Goldmin = Instantiate(this.gameObject, new Vector3(land % 100 * 100 - 25, 1, mapDistance - 50 - ((a.land - a.land % 100) - 40)), Quaternion.Euler(0, 180, 0));
+                    }
+                    a.goldmine[land]++;
+                    a.zugGemacht = true;
+                    a.entwicklungsGebäude = 0;
+                    a.entwicklungBauen = false;
+                }
+            }
+            if (this.transform.name == "Festung" && festung && a.entwicklungsGebäude == 2)
+            {
+                land = a.land;
+                if (land != 0 && a.festung[land] == 0 && a.spielerLand[land] == a.anDerReihe && a.rathaus[land] != 0)
+                {
+                    a.festung[land] = 1;
+                    GameObject Goldmin = Instantiate(this.gameObject, new Vector3(land % 100 * 100 - 50, 1, mapDistance - ((a.land - a.land % 100) - 5)), this.transform.rotation);
+                    a.zugGemacht = true;
+                    a.entwicklungsGebäude = 0;
+                    a.entwicklungBauen = false;
+                    a.rathaus[land] = 0;
+                }
+            }
+            if (this.transform.name == "Tempel" && tempel && a.entwicklungsGebäude == 3)
+            {
+                land = a.land;
+                if (land != 0 && a.goldmine[land] + a.tempelLand[land] < 2 && a.spielerLand[land] == a.anDerReihe)
+                {
+                    if (a.goldmine[land] + a.tempelLand[land] == 0 && a.kaserne[land] == 0)
+                    {
+                        a.tempelLand[land] = 1;
+                        GameObject Goldmin = Instantiate(this.gameObject, new Vector3(land % 100 * 100 - 75, 7, mapDistance - ((a.land - a.land % 100) - 30)), this.transform.rotation);
+                    }
+                    else if (a.goldmine[land] + a.tempelLand[land] == 1 || a.kaserne[land] < 3 && a.goldmine[land] == 0)
+                    {
+                        a.tempelLand[land] = 2;
+                        GameObject Goldmin = Instantiate(this.gameObject, new Vector3(land % 100 * 100 - 25, 7, mapDistance - 50 - ((a.land - a.land % 100) - 30)), Quaternion.Euler(0, 180, 0));
+                    }
+                    a.zugGemacht = true;
+                    a.entwicklungsGebäude = 0;
+                    a.entwicklungBauen = false;
+                }
+            }
+            if (this.transform.name == "Weltwunder" && weltwunder && a.entwicklungsGebäude == 4)
+            {
+                land = a.land;
+                if (land != 0 && a.weltwunderLand[land] == 0 && a.spielerLand[land] == a.anDerReihe)
+                {
+                    a.weltwunderLand[land] = 1;
+                    GameObject Goldmin = Instantiate(this.gameObject, new Vector3(land % 100 * 100 - 50, 1, mapDistance - ((a.land - a.land % 100) - 5)), this.transform.rotation);
+                    a.zugGemacht = true;
+                    a.entwicklungsGebäude = 0;
+                    a.entwicklungBauen = false;
+                    a.dieseRundegebaut = true;
+                }
+                else
+                {
+                    if (land != 0 && a.weltwunderLand[land] <= 8 && a.spielerLand[land] == a.anDerReihe)
+                    {
+                        a.zugGemacht = true;
+                        a.entwicklungsGebäude = 0;
+                        a.entwicklungBauen = false;
+                        a.weltwunderLand[land]++;
+                        a.dieseRundegebaut = true;
+                    }
+                }
+            }
+        }
     }
     public void RathausBauen()
     {
@@ -317,6 +488,51 @@ public class gebäude : MonoBehaviour
         Karsernee = Instantiate(Kaserne, new Vector3(land % 100 * 100 - 75, 1, mapDistance - 50 - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, -90, 0));
         a.kaserne[land] = 4;
         Karsernee.GetComponent<gebäude>().mainCamera = mainCamera;
+    }
+    public void eineKarserneBauen()
+    {
+        if (a.rasse[a.anDerReihe - 1] == 0)
+        {
+            Kaserne = KaserneMensch;
+            Debug.Log("omg");
+        }
+        if (a.rasse[a.anDerReihe - 1] == 1)
+        {
+            Kaserne = KaserneOrk;
+            Debug.Log("omg");
+        }
+        if (a.rasse[a.anDerReihe - 1] == 2)
+        {
+            Kaserne = KaserneUntote;
+            Debug.Log("omg");
+        }
+        if (a.rasse[a.anDerReihe - 1] == 3)
+        {
+            Kaserne = KaserneElf;
+            Debug.Log("omg");
+        }
+        if (land != 0 && a.kaserne[land] < 4 && a.spielerLand[land] == a.anDerReihe)
+        {
+            Kaserne.GetComponent<gebäude>().mainCamera = mainCamera;
+            Kaserne.GetComponent<gebäude>().land = land;
+            if (a.kaserne[land] == 0)
+            {
+                Instantiate(Kaserne, new Vector3(land % 100 * 100 - 75, 1, mapDistance - ((a.land - a.land % 100) - 25)), this.transform.rotation);
+            }
+            if (a.kaserne[land] == 1)
+            {
+                Instantiate(Kaserne, new Vector3(land % 100 * 100 - 25, 1, mapDistance - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, 90, 0));
+            }
+            if (a.kaserne[land] == 2)
+            {
+                Instantiate(Kaserne, new Vector3(land % 100 * 100 - 25, 1, mapDistance - 50 - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, 180, 0));
+            }
+            if (a.kaserne[land] == 3)
+            {
+                Instantiate(Kaserne, new Vector3(land % 100 * 100 - 75, 1, mapDistance - 50 - ((a.land - a.land % 100) - 25)), Quaternion.Euler(0, -90, 0));
+            }
+            a.kaserne[land]++;
+        }
     }
 }
 

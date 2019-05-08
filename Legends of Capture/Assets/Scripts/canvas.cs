@@ -27,14 +27,25 @@ public class canvas : MonoBehaviour
     public bool spieler4;
     public bool verloren;
     public bool gewonnen;
+    public bool entwicklungMission;
     public bool runde;
     public GameObject panel;
     public int verlorenAnzeigen;
     public bool überspringen;
+    public bool entwicklungMissionan;
+    public bool entwicklung;
+    public bool entwicklungAn;
+    public bool missionen;
+    public bool missionenAn;
+    public bool gebäudeAn;
+    public bool goldSammelnAn;
+
+    string text1 = "";
+    string text2 = "";
     // Use this for initialization
     void Start()
     {
-        a = mainCamera.GetComponent<mainScript>(); 
+        a = mainCamera.GetComponent<mainScript>();
         if (anDerReihe || gold || rathäuser || länder || zeit || spieler1 || spieler2 || spieler3 || spieler4 || runde)
         {
             text = GetComponent<Text>();
@@ -54,6 +65,11 @@ public class canvas : MonoBehaviour
         if (spieler4)
         {
             text.text = "Spieler4";
+        }
+        if (entwicklungMission)
+        {
+            this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(false);
+            this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).gameObject.SetActive(false);
         }
     }
 
@@ -242,7 +258,7 @@ public class canvas : MonoBehaviour
                     {
                         text.text = "0" + hourCount + ":0" + minuteCount + ":0" + (int)secondsCount;
                     }
-                }else if (secondsCount < 10)
+                } else if (secondsCount < 10)
                 {
                     text.text = "0" + hourCount + minuteCount + ":0" + (int)secondsCount;
                 }
@@ -374,13 +390,13 @@ public class canvas : MonoBehaviour
                     {
                         if (!a.gebäudeErhalten && !a.gebäudePlündern)
                         {
-                            if (a.kaserne[a.plündderLand] + a.rathaus[a.plündderLand] + a.kaserne[a.zweitesAngriffsLand] + a.rathaus[a.zweitesAngriffsLand] > 0)
+                            if (a.kaserne[a.plündderLand] + a.rathaus[a.plündderLand] + a.kaserne[a.zweitesAngriffsLand] + a.rathaus[a.zweitesAngriffsLand] + a.goldmine[a.plündderLand] + a.goldmine[a.zweitesAngriffsLand] + a.tempelLand[a.plündderLand] + a.tempelLand[a.zweitesAngriffsLand] + a.festung[a.plündderLand] + a.festung[a.zweitesAngriffsLand] > 0)
                             {
                                 this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).gameObject.SetActive(true);
                                 this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject.SetActive(true);
                                 this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).transform.position = this.transform.position - new Vector3(0, Screen.height / 5, 0);
                                 this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).transform.position = this.transform.position - new Vector3(0, Screen.height / 2.5f, 0);
-                                this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Plündern: " + ((a.rathaus[a.plündderLand] * (20 + a.forschenPlündern[a.anDerReihe]) + a.kaserne[a.plündderLand] * (15 + a.forschenPlündern[a.anDerReihe])) + (a.rathaus[a.zweitesAngriffsLand] * (20 + a.forschenPlündern[a.anDerReihe]) + a.kaserne[a.zweitesAngriffsLand] * (15 + a.forschenPlündern[a.anDerReihe]))) + "G";
+                                this.gameObject.transform.GetChild(1).gameObject.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Plündern: " + ((a.rathaus[a.plündderLand] * (20 + a.forschenPlündern[a.anDerReihe]) + a.kaserne[a.plündderLand] * (15 + a.forschenPlündern[a.anDerReihe])) + (a.rathaus[a.zweitesAngriffsLand] * (20 + a.forschenPlündern[a.anDerReihe]) + a.kaserne[a.zweitesAngriffsLand] * (15 + a.forschenPlündern[a.anDerReihe])) + ((a.goldmine[a.plündderLand] + a.tempelLand[a.plündderLand] + a.festung[a.plündderLand]) * (20 + a.forschenPlündern[a.anDerReihe])) + ((a.goldmine[a.zweitesAngriffsLand] + a.tempelLand[a.zweitesAngriffsLand] + a.festung[a.zweitesAngriffsLand]) * (20 + a.forschenPlündern[a.anDerReihe]))) + "G";
                             }
                         }
                         if (a.gebäudePlündern)
@@ -427,6 +443,8 @@ public class canvas : MonoBehaviour
             this.gameObject.transform.GetChild(11).gameObject.SetActive(false);
             this.gameObject.transform.GetChild(12).gameObject.SetActive(false);
             this.gameObject.transform.GetChild(13).gameObject.SetActive(false);
+            this.gameObject.transform.GetChild(15).gameObject.SetActive(false);
+
             this.transform.position = new Vector3(Screen.width * 0.125f, Screen.height * 0.55f, 0);
             if (a.ausbilden && !a.zugGemacht)
             {
@@ -434,6 +452,7 @@ public class canvas : MonoBehaviour
                 if (a.ausbilLand == 0)
                 {
                     this.gameObject.transform.GetChild(1).gameObject.SetActive(true);
+                    this.gameObject.transform.GetChild(15).gameObject.GetComponent<Text>().text = "Truppen: " + a.truppen[a.anDerReihe] + "/" + (a.Kasernen[a.anDerReihe] * 4 + 7 * a.festungen[a.anDerReihe]);
                 }
                 else
                 {
@@ -451,6 +470,7 @@ public class canvas : MonoBehaviour
                     this.gameObject.transform.GetChild(10).gameObject.SetActive(true);
                     this.gameObject.transform.GetChild(11).gameObject.SetActive(true);
                     this.gameObject.transform.GetChild(12).gameObject.SetActive(true);
+                    this.gameObject.transform.GetChild(15).gameObject.SetActive(true);
                     this.gameObject.transform.GetChild(9).gameObject.GetComponent<Text>().text = "Reiter: " + a.reiterAusbilden;
                     if (a.rasse[a.anDerReihe - 1] == 0)
                     {
@@ -468,6 +488,7 @@ public class canvas : MonoBehaviour
                     {
                         this.gameObject.transform.GetChild(12).gameObject.transform.GetChild(0).gameObject.GetComponent<Text>().text = "" + (a.bogiesAusbilden * (15 - a.forschenBogenschützen[a.anDerReihe]) + a.babosAusbilden * (10 - a.forschenBabaren[a.anDerReihe]) + a.reiterAusbilden * (25 - a.forschenReiter[a.anDerReihe])) + "G";
                     }
+                    this.gameObject.transform.GetChild(15).gameObject.GetComponent<Text>().text = "Truppen: " + a.truppen[a.anDerReihe] + "/" + (a.Kasernen[a.anDerReihe] * 4 + (7 * a.festungen[a.anDerReihe]));
                 }
             }
             if (a.ausbilden && a.zugGemacht)
@@ -701,6 +722,448 @@ public class canvas : MonoBehaviour
             else
             {
                 this.transform.position = new Vector3(Screen.width * 50f, Screen.height * 0.65f, 0);
+            }
+        }
+        if (entwicklungMission)
+        {
+            if (a.entwicklung[a.anDerReihe] == 1)
+            {
+                text1 = "____________________Nächste Entwicklung (2): 1.: Besitze 5 Länder         2.: Besitze 3 Rathäuser   ____________________Vorteile:                            1.: Forschung freischalten 2.: Goldgrube freischalten ____________________";
+                text2 = "Entwickeln: 60 Gold";
+                if (a.länder[a.anDerReihe] >= 5)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(false);
+                }
+                if (a.rathäuser[a.anDerReihe] >= 3)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(false);
+                }
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(4).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(5).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(6).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(7).gameObject.gameObject.SetActive(false);
+            }
+            if (a.entwicklung[a.anDerReihe] == 2)
+            {
+                text1 = "____________________Nächste Entwicklung (3): 1.: Besitze 6 Länder         2.: Besitze 5 Rathäuser   3.: Besitze 5 Straßen       4.: Besitze eine Goldmine ____________________ Vorteile:                             1.: Festung freischalten       ____________________";
+                text2 = "Entwickeln: 80 Gold";
+                if (a.länder[a.anDerReihe] >= 6)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(false);
+                }
+                if (a.rathäuser[a.anDerReihe] >= 5)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(false);
+                }
+                if (a.Straßen[a.anDerReihe] >= 5)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(4).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(4).gameObject.gameObject.SetActive(false);
+                }
+                if (a.goldMinen[a.anDerReihe] >= 1)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(5).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(5).gameObject.gameObject.SetActive(false);
+                }
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(6).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(7).gameObject.gameObject.SetActive(false);
+
+            }
+            if (a.entwicklung[a.anDerReihe] == 3)
+            {
+                text1 = "____________________Nächste Entwicklung (4): 1.: Besitze 6 Länder         2.: Besitze 6 Rathäuser   3.: Besitze 7 Straßen       4.: Besitze 2 Goldminen   5.: Besitze eine Festung  ____________________ Vorteile:                          1.: Tempel freischalten    _____________________";
+                text2 = "Entwickeln: 100 Gold";
+                if (a.länder[a.anDerReihe] >= 6)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(false);
+                }
+                if (a.rathäuser[a.anDerReihe] >= 6)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(false);
+                }
+                if (a.Straßen[a.anDerReihe] >= 7)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(4).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(4).gameObject.gameObject.SetActive(false);
+                }
+                if (a.goldMinen[a.anDerReihe] >= 2)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(5).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(5).gameObject.gameObject.SetActive(false);
+                }
+                if (a.festungen[a.anDerReihe] >= 1)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(6).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(6).gameObject.gameObject.SetActive(false);
+                }
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(7).gameObject.gameObject.SetActive(false);
+
+            }
+            if (a.entwicklung[a.anDerReihe] == 4)
+            {
+                text1 = "____________________Nächste Entwicklung (5): 1.: Besitze 6 Länder         2.: Besitze 6 Rathäuser   3.: Besitze 7 Straßen       4.: Besitze 3 Goldminen   5.: Besitze 2 Festungen      6.: Besitze eine Tempel       ____________________ Vorteile:                          1.: Weltwunder kaufen    _____________________";
+                text2 = "Entwickeln: 120 Gold";
+                if (a.länder[a.anDerReihe] >= 6)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(false);
+                }
+                if (a.rathäuser[a.anDerReihe] >= 6)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(false);
+                }
+                if (a.Straßen[a.anDerReihe] >= 7)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(4).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(4).gameObject.gameObject.SetActive(false);
+                }
+                if (a.goldMinen[a.anDerReihe] >= 3)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(5).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(5).gameObject.gameObject.SetActive(false);
+                }
+                if (a.festungen[a.anDerReihe] >= 2)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(6).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(6).gameObject.gameObject.SetActive(false);
+                }
+                if (a.tempel[a.anDerReihe] >= 1)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(7).gameObject.gameObject.SetActive(true);
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(7).gameObject.gameObject.SetActive(false);
+                }
+            }
+            if (a.entwicklung[a.anDerReihe] == 5)
+            {
+                text1 = "____________________ Du hast die höchste Entwicklung erreicht. Beschütze dein Weltwunder bis es fertig gebaut ist.            ____________________";
+                text2 = "Sieg einfordern!";
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(2).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(3).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(4).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(5).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(6).gameObject.gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(7).gameObject.gameObject.SetActive(false);
+            }
+            this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(0).gameObject.GetComponent<Text>().text = text1;
+            this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).GetChild(1).GetChild(0).gameObject.GetComponent<Text>().text = text2;
+            //missionen:
+                if (a.mission[a.anDerReihe, 1] == 0)
+                {
+                    a.missionErledigt(1);
+                }
+            if (a.mission[a.anDerReihe, 2] == 0)
+            {
+                a.missionErledigt(2);
+            }
+            this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).gameObject.GetComponent<Text>().text = "Missionen erledigt: " + a.missionenErledigt[a.anDerReihe] + "/15. Nach 15 erledigten Missionen, kannst du den Sieg einfordern!";
+            for (int i = 1; i < 5; i++)
+            {
+                if (i == 3 && a.missionFreigeschaltet[a.anDerReihe] >= 1 || i == 4 && a.missionFreigeschaltet[a.anDerReihe] == 2 || i < 3)
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).gameObject.SetActive(true);
+                    this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "" + a.mission[a.anDerReihe, i];
+                    if (a.mission[a.anDerReihe, i] == -1)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Es gibt keine weiteren Missionen!";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 1)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Setze eine Spezialfähigkeit ein.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 2)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Führe eine Schlacht.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 3)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Erobere ein Land eines Gegners.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 4)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Führe einen Bogenschützenangriff durch.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 5)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Zerstöre ein Rathaus.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 6)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "`Erhalte´ nach einem Angriff ein Rathaus.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 7)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Bilde 10 Bogenschützen aus.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 8)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Bilde 7 Reiter aus.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 9)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Erobere drei Länder.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 10)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Sei an deinem Truppenlimet.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 11)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Verliere ein Land.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 12)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Verliere bei einem Kampf Truppen.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 13)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Bilde in einem Zug Truppen aller Arten aus.";
+                    }
+                    if (a.mission[a.anDerReihe, i] == 14)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "."; a.missionFortschritt[a.anDerReihe, i] = -1;
+                    }
+                    if (a.mission[a.anDerReihe, i] == 15)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "."; a.missionFortschritt[a.anDerReihe, i] = -1;
+                    }
+                    this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(1).gameObject.SetActive(false);
+                    if (a.missionFortschritt[a.anDerReihe, i] == -1)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(1).gameObject.SetActive(true);
+                    }
+                    //  if (a.mission[a.anDerReihe,i] == 1)
+                    //  {
+                    //  }
+                }
+                else
+                {
+                    this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(1).gameObject.SetActive(false);
+                    this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(i).GetChild(0).gameObject.GetComponent<Text>().text = "Mission kaufen: " + (20 + 10 * i) + "G";
+                    if (a.missionFreigeschaltet[a.anDerReihe] == 0)
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(4).gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(4).gameObject.SetActive(true);
+                    }
+                }
+            }
+            // goldSammeln Aneigen:
+            this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).GetChild(1).GetChild(2).GetChild(0).gameObject.GetComponent<Text>().text = "Gesammeltes Gold: " + a.gesammeltesGold[a.anDerReihe] +"G";
+        }
+    }
+    public void entwicklungMissionAn()
+    {
+        entwicklungMissionan = !entwicklungMissionan;
+        if (entwicklungMissionan)
+        {
+            this.gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            this.gameObject.transform.GetChild(1).transform.rotation = Quaternion.Euler(0, 0, 0);
+        }
+        else
+        {
+            this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(false);
+            this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).gameObject.SetActive(false);
+            this.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+            this.gameObject.transform.GetChild(1).transform.rotation = Quaternion.Euler(0, 0, 180);
+            entwicklungAn = false;
+            missionenAn = false;
+            gebäudeAn = false;
+            this.gameObject.transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
+            this.gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+            this.gameObject.transform.GetChild(0).GetChild(2).GetChild(0).gameObject.transform.GetComponent<RectTransform>().position = this.gameObject.transform.GetChild(0).GetChild(1).GetChild(0).gameObject.GetComponent<RectTransform>().position - new Vector3(0, 100, 0);
+            this.gameObject.transform.GetChild(0).GetChild(1).GetChild(2).gameObject.SetActive(false);
+            this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).gameObject.SetActive(false);
+            goldSammelnAn = false;
+        }
+    }
+    public void entwicklungMissionAus()
+    {
+        this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).gameObject.SetActive(false);
+        this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(false);
+        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).gameObject.SetActive(false);
+        entwicklungMissionan = false;
+        this.gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        this.gameObject.transform.GetChild(1).transform.rotation = Quaternion.Euler(0, 0, 180);
+        entwicklungAn = false;
+        missionenAn = false;
+        gebäudeAn = false;
+        goldSammelnAn = false;
+        this.gameObject.transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
+        this.gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+        this.gameObject.transform.GetChild(0).GetChild(2).GetChild(0).gameObject.transform.GetComponent<RectTransform>().position = this.gameObject.transform.GetChild(0).GetChild(1).GetChild(0).gameObject.GetComponent<RectTransform>().position - new Vector3(0, 100, 0);
+        this.gameObject.transform.GetChild(0).GetChild(1).GetChild(2).gameObject.SetActive(false);
+
+    }
+    public void entwicklungan()
+    {
+        if (entwicklung)
+        {
+            entwicklungAn = !entwicklungAn;
+            if (entwicklungAn)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+        if (entwicklungMission)
+        {
+            entwicklungAn = !entwicklungAn;
+            if (entwicklungAn)
+            {
+                this.gameObject.transform.GetChild(0).GetChild(2).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).GetChild(0).gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).GetChild(1).gameObject.SetActive(false);
+
+            }
+            else
+            {
+                gebäudeAn = false;
+                goldSammelnAn = false;
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(2).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(2).gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(false);
+                a.entwicklungBauen = false;
+                a.entwicklungsGebäude = 0;
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).gameObject.SetActive(false);
+            }
+        }
+    }
+    public void missionenan()
+    {
+        if (missionen)
+        {
+            missionenAn = !missionenAn;
+            if (missionenAn)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+        if (entwicklungMission)
+        {
+            missionenAn = !missionenAn;
+            if (missionenAn)
+            {
+                this.gameObject.transform.GetChild(0).GetChild(2).GetChild(0).gameObject.transform.GetComponent<RectTransform>().position = this.gameObject.transform.GetChild(0).GetChild(1).GetChild(0).gameObject.GetComponent<RectTransform>().position;
+                this.gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).gameObject.SetActive(true);
+            }
+            else
+            {
+                this.gameObject.transform.GetChild(0).GetChild(1).gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).GetChild(2).GetChild(0).gameObject.transform.GetComponent<RectTransform>().position = this.gameObject.transform.GetChild(0).GetChild(1).GetChild(0).gameObject.GetComponent<RectTransform>().position - new Vector3(0, 100, 0);
+                this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(2).GetChild(1).GetChild(0).gameObject.GetComponent<Text>().text = "Missionen erledigt: ";
+            }
+        }
+    }
+    public void gebäude()
+    {
+        if (entwicklungMission)
+        {
+            gebäudeAn = !gebäudeAn;
+            if (gebäudeAn)
+            {
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(2).gameObject.SetActive(true);
+            }
+            else
+            {
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(2).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).gameObject.SetActive(true);
+                a.entwicklungBauen = false;
+                a.entwicklungsGebäude = 0;
+            }
+        }
+    }
+    public void goldSammeln()
+    {
+        if (entwicklungMission)
+        {
+            goldSammelnAn = !goldSammelnAn;
+            if (goldSammelnAn)
+            {
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).GetChild(0).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(2).gameObject.SetActive(false);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).GetChild(1).gameObject.SetActive(true);
+
+            }
+            else
+            {
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(1).gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).GetChild(0).gameObject.SetActive(true);
+                this.gameObject.transform.GetChild(0).GetChild(1).GetChild(3).GetChild(1).gameObject.SetActive(false);
             }
         }
     }
